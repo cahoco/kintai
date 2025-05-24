@@ -1,0 +1,1 @@
+<p>auth/verify.blade.php</p>

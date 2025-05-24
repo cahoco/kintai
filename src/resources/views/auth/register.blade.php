@@ -1,0 +1,1 @@
+<p>auth/register.blade.php</p>
