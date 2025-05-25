@@ -8,17 +8,19 @@
 <div class="register-container">
     <h2 class="register-title">ログイン</h2>
 
-    <form method="POST" action="#">
+    <form method="POST" action="{{ url('/login') }}">
         @csrf
 
         <div class="form-group">
             <label for="email">メールアドレス</label>
-            <input type="email" id="email" name="email" required>
+            <input type="email" name="email" id="email" value="{{ old('email') }}">
+            @error('email')<div class="error">{{ $message }}</div>@enderror
         </div>
 
         <div class="form-group">
             <label for="password">パスワード</label>
-            <input type="password" id="password" name="password" required>
+            <input type="password" name="password" id="password" value="{{ old('password') }}">
+            @error('password')<div class="error">{{ $message }}</div>@enderror
         </div>
 
         <div class="form-submit">
