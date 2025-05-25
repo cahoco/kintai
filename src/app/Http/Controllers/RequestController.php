@@ -3,12 +3,23 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\CorrectionRequest;
+use App\Models\StampCorrectionRequest;
 
 class RequestController extends Controller
 {
     public function index()
     {
-        return view('request.index');
+        $userId = auth()->id();
+
+        // 🔽 リレーションも一緒に取得
+        $requests = StampCorrectionRequest::with('user')
+            ->where('user_id', $userId)
+            ->orderBy('status')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('request.index', compact('requests'));
     }
 
         public function indexAdmin()
@@ -61,6 +72,24 @@ class RequestController extends Controller
         ];
 
         return view('admin.request.approve', compact('request'));
+    }
+
+    public function store(CorrectionRequest $request, $id)
+    {
+        \App\Models\StampCorrectionRequest::create([
+            'attendance_id' => $id,
+            'user_id' => auth()->id(),
+            'clock_in' => $request->clock_in,
+            'clock_out' => $request->clock_out,
+            'break_start_1' => $request->break_start_1,
+            'break_end_1' => $request->break_end_1,
+            'break_start_2' => $request->break_start_2,
+            'break_end_2' => $request->break_end_2,
+            'note' => $request->note,
+            'status' => '承認待ち',
+        ]);
+
+        return redirect('/stamp_correction_request/list');
     }
 
 }

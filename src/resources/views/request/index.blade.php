@@ -25,17 +25,20 @@
             </tr>
         </thead>
         <tbody>
-            @for ($i = 0; $i < 10; $i++)
+            @forelse ($requests as $request)
                 <tr>
-                    <td>承認待ち</td>
-                    <td>西怜奈</td>
-                    <td>2023/06/01</td>
-                    <td>遅延のため</td>
-                    <td>2023/06/02</td>
-                    <td><a href="{{ url('/attendance/' . $i) }}">詳細</a></td>
+                    <td>{{ $request->status }}</td>
+                    <td>{{ $request->user->name }}</td>
+                    <td>{{ \Carbon\Carbon::parse($request->created_at)->format('Y/m/d') }}</td>
+                    <td>{{ $request->note }}</td>
+                    <td>{{ \Carbon\Carbon::parse($request->created_at)->format('Y/m/d') }}</td>
+                    <td><a href="{{ route('attendance.show', ['id' => $request->attendance_id]) }}">詳細</a></td>
                 </tr>
-            @endfor
+            @empty
+                <tr><td colspan="6">申請データがありません</td></tr>
+            @endforelse
         </tbody>
+
     </table>
 </div>
 @endsection

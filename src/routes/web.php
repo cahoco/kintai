@@ -11,10 +11,14 @@ use Illuminate\Support\Facades\Auth;
 
 Route::get('/attendance/list', [AttendanceController::class, 'index'])->name('attendance.index');
 Route::get('/attendance/{id}', [AttendanceController::class, 'show'])->name('attendance.show');
+Route::post('/attendance/{id}/request', [RequestController::class, 'store'])->name('request.store');
 Route::get('/attendance', [AttendanceController::class, 'create'])->name('attendance.create');
 
-Route::get('/stamp_correction_request/list', [RequestController::class, 'index']);
-Route::get('/stamp_correction_request/list', [RequestController::class, 'indexAdmin']);
+// 一般ユーザー用（DBのデータ）
+Route::get('/stamp_correction_request/list', [RequestController::class, 'index'])->name('request.index');
+
+// 管理者用（ダミーデータ or 本番用に切り替え予定）
+Route::get('/admin/stamp_correction_request/list', [RequestController::class, 'indexAdmin'])->name('admin.request.index');
 // ※ 認証ミドルウェアで「管理者と一般ユーザーで同じパスを使い分ける」構成にもできます。必要ならそちらも実装可能です。
 
 Route::get('/stamp_correction_request/approve/{id}', [RequestController::class, 'showApprove']);

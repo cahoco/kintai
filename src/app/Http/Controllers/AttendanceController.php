@@ -36,8 +36,20 @@ class AttendanceController extends Controller
 
     public function show($id)
     {
-        // いまは仮データでOK
-        return view('attendance.show', ['id' => $id]);
+        $attendance = Attendance::with('breakTimes')->findOrFail($id);
+
+        // 自分の勤怠だけ閲覧可能にする（セキュリティ）
+        if ($attendance->user_id !== Auth::id()) {
+            abort(403, '許可されていないアクセスです');
+        }
+
+        $user = Auth::user();
+
+        return view('attendance.show', [
+            'id' => $id,
+            'attendance' => $attendance,
+            'user' => $user,
+        ]);
     }
 
     public function clockIn()
