@@ -4,7 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
+use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\StaffController;
+use App\Http\Controllers\AuthController;
 
 Route::get('/attendance/list', [AttendanceController::class, 'index']);
 Route::get('/attendance/{id}', [AttendanceController::class, 'show']);
@@ -20,3 +22,14 @@ Route::get('/admin/attendance/list', [AdminAttendanceController::class, 'index']
 
 Route::get('/admin/staff/list', [StaffController::class, 'index']);
 Route::get('/admin/attendance/staff/{id}', [AdminAttendanceController::class, 'showByStaff']);
+
+Route::get('/admin/attendance/{id}', [AdminAttendanceController::class, 'show']);
+
+// 一時的な表示専用ルート（nameをつけない）
+Route::get('/register', [AuthController::class, 'showRegisterForm']);
+Route::post('/register', [AuthController::class, 'register']);
+
+Route::get('/login', [AuthController::class, 'showLoginForm']);
+Route::post('/login', [AuthController::class, 'login']);
+
+Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');

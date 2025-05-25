@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('css')
-<link rel="stylesheet" href="{{ asset('css/attendance_index.css') }}">
+<link rel="stylesheet" href="{{ asset('css/index.css') }}">
 @endsection
 
 @section('content')
@@ -34,7 +34,7 @@
                 <td>18:00</td>
                 <td>1:00</td>
                 <td>8:00</td>
-                <td><a href="{{ url('/attendance/' . $i) }}">詳細</a></td>
+                <td><a href="{{ url('/admin/attendance/' . $i) }}">詳細</a></td>
             </tr>
             @endforeach
         </tbody>
