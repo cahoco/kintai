@@ -9,8 +9,8 @@ use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Auth;
 
-Route::get('/attendance/list', [AttendanceController::class, 'index']);
-Route::get('/attendance/{id}', [AttendanceController::class, 'show']);
+Route::get('/attendance/list', [AttendanceController::class, 'index'])->name('attendance.index');
+Route::get('/attendance/{id}', [AttendanceController::class, 'show'])->name('attendance.show');
 Route::get('/attendance', [AttendanceController::class, 'create'])->name('attendance.create');
 
 Route::get('/stamp_correction_request/list', [RequestController::class, 'index']);
@@ -21,7 +21,8 @@ Route::get('/stamp_correction_request/approve/{id}', [RequestController::class, 
 
 Route::get('/admin/attendance/list', [AdminAttendanceController::class, 'index']);
 
-Route::get('/admin/staff/list', [StaffController::class, 'index']);
+// 将来的に↓ミドルウェアで変更
+Route::get('/admin/attendance/list', [AdminAttendanceController::class, 'index'])->name('admin.attendance.index');
 Route::get('/admin/attendance/staff/{id}', [AdminAttendanceController::class, 'showByStaff']);
 
 Route::get('/admin/attendance/{id}', [AdminAttendanceController::class, 'show']);

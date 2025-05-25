@@ -6,11 +6,11 @@
     <link rel="stylesheet" href="{{ asset('css/common.css') }}?v={{ time() }}">
     @yield('css')
 </head>
-<body>
+<body class="body">
     <header class="header">
         <div class="header-inner">
             <a href="/attendance" class="logo">
-                <img src="{{ asset('images/logo.svg') }}" alt="COACHTECH" class="logo-img">
+                <img src="{{ asset('storage/images/logo.svg') }}" alt="COACHTECH" class="logo-img">
             </a>
             <nav class="nav">
                 <a href="/attendance">勤怠</a>

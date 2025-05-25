@@ -1,23 +1,65 @@
-.container {
-    max-width: 1000px;
+.page-wrapper {
+    max-width: 900px;
     margin: 40px auto;
-    padding: 40px;
-    background-color: #ffffff;
-    border-radius: 10px;
+    padding: 0 40px;
 }
 
 .page-title {
     font-size: 20px;
     font-weight: bold;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+    border-left: 6px solid #000;
+    padding-left: 10px;
 }
 
-.month-switch {
+.card {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 16px 24px;
+    margin-bottom: 30px;
+}
+
+.month-card {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+}
+
+.attendance-card {
+    padding: 0;
+}
+
+.month-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 12px 24px;
+    gap: 32px; /* ← 左右の余白を確保 */
+    margin-bottom: 30px;
+}
+
+.month-card a {
+    color: #737373;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
     font-weight: bold;
+}
+
+.month-card .arrow-icon {
+    width: 14px;
+    height: auto;
+    opacity: 0.3;
+}
+
+.month-card .calendar-icon {
+    width: 20px;
+    height: auto;
+    vertical-align: middle;
+    margin-right: 6px;
 }
 
 .attendance-table {
@@ -27,9 +69,20 @@
     border-radius: 6px;
     overflow: hidden;
     font-size: 14px;
+    color: #737373;
 }
 
-.attendance-table th,
+.attendance-table th {
+    text-align: center;
+    padding: 10px;
+    border-bottom: 3px solid #e1e1e1;
+    font-weight: 700px;
+    color: #737373;
+    font-size: 16px;
+    line-height: 100%;
+    letter-spacing: 15%;
+}
+
 .attendance-table td {
     text-align: center;
     padding: 10px;
@@ -37,7 +90,7 @@
 }
 
 .attendance-table thead {
-    background-color: #f5f5f5;
+    background-color: #ffffff;
 }
 
 .attendance-table tbody tr:hover {
@@ -45,6 +98,14 @@
 }
 
 .attendance-table a {
-    color: black;
-    text-decoration: underline;
+    color: #737373;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.calender-icon {
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+    margin-right: 6px;
 }

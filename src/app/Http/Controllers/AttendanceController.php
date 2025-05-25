@@ -10,9 +10,28 @@ use App\Models\BreakTime;
 
 class AttendanceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('attendance.index');
+        $user = Auth::user();
+
+        // ?month=2025-06 のようなクエリを受け取る。なければ今月。
+        $month = $request->query('month', Carbon::now()->format('Y-m'));
+        $startOfMonth = Carbon::parse($month)->startOfMonth();
+        $endOfMonth = Carbon::parse($month)->endOfMonth();
+
+        // 勤怠データ取得（自分の当月分）
+        $attendances = Attendance::with('breakTimes')
+            ->where('user_id', $user->id)
+            ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->orderBy('date')
+            ->get();
+
+        return view('attendance.index', [
+            'attendances' => $attendances,
+            'currentMonth' => $startOfMonth->format('Y/m'),
+            'prevMonth' => $startOfMonth->copy()->subMonth()->format('Y-m'),
+            'nextMonth' => $startOfMonth->copy()->addMonth()->format('Y-m'),
+        ]);
     }
 
     public function show($id)
