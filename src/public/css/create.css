@@ -29,13 +29,40 @@ body {
     margin-bottom: 30px;
 }
 
+/* 横並びにするためのラッパー */
+.button-row {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* ボタン間のスペース */
+    margin-top: 20px;
+}
+
+/* 共通ボタンスタイル（既存のままでOK） */
 .stamp-button {
-    background-color: #000;
-    color: #fff;
     font-size: 16px;
     font-weight: bold;
     border: none;
     border-radius: 10px;
     padding: 12px 40px;
     cursor: pointer;
+}
+
+/* 黒ボタン（退勤） */
+.stamp-button.black {
+    background-color: #000;
+    color: #fff;
+}
+
+/* 白ボタン（休憩） */
+.stamp-button.white {
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #ccc;
+}
+
+.message {
+    font-size: 18px;
+    font-weight: bold;
+    color: #000;
+    margin-top: 30px;
 }

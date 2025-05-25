@@ -6,13 +6,45 @@
 
 @section('content')
 <div class="stamp-container">
-    <div class="status">勤務外</div>
-    <div class="date">2023年6月1日(木)</div>
-    <div class="time">08:00</div>
+    <div class="status">{{ $status }}</div>
+    <div class="date">{{ $today }}</div>
+    <div class="time">{{ $now }}</div>
 
-    <form method="POST" action="#">
-        @csrf
-        <button type="submit" class="stamp-button">出勤</button>
-    </form>
+    @if (session('success'))
+        <div class="success-message">{{ session('success') }}</div>
+    @endif
+    @if (session('error'))
+        <div class="error-message">{{ session('error') }}</div>
+    @endif
+
+    @if ($status === '勤務外')
+        <form method="POST" action="{{ route('attendance.clock_in') }}">
+            @csrf
+            <button type="submit" class="stamp-button black">出勤</button>
+        </form>
+
+    @elseif ($status === '出勤中')
+        <div class="button-row">
+            <form method="POST" action="{{ route('attendance.clock_out') }}">
+                @csrf
+                <button type="submit" class="stamp-button black">退勤</button>
+            </form>
+
+            <form method="POST" action="{{ route('attendance.break_start') }}">
+                @csrf
+                <button type="submit" class="stamp-button white">休憩入</button>
+            </form>
+        </div>
+
+    @elseif ($status === '休憩中')
+        <form method="POST" action="{{ route('attendance.break_end') }}">
+            @csrf
+            <button type="submit" class="stamp-button white">休憩戻</button>
+        </form>
+
+    @elseif ($status === '退勤済')
+    {{-- ボタンなし --}}
+    @endif
+
 </div>
 @endsection

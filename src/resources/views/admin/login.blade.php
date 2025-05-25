@@ -8,7 +8,7 @@
 <div class="register-container">
     <h2 class="register-title">管理者ログイン</h2>
 
-    <form method="POST" action="#">
+    <form method="POST" action="{{ url('/admin/login') }}">
         @csrf
         <div class="form-group">
             <label for="email">メールアドレス</label>

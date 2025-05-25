@@ -16,13 +16,19 @@
                 <a href="/attendance">勤怠</a>
                 <a href="/attendance/list">勤怠一覧</a>
                 <a href="/stamp_correction_request/list">申請</a>
-                <a href="/logout">ログアウト</a>
+                <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+                    @csrf
+                    <button type="submit" class="logout-button">ログアウト</button>
+                </form>
             </nav>
             <nav class="nav">
                 <a href="/admin/attendance/list">勤怠一覧</a>
                 <a href="/admin/staff/list">スタッフ一覧</a> {{-- ← 追加 --}}
                 <a href="/stamp_correction_request/list">申請一覧</a>
-                <a href="/logout">ログアウト</a>
+                <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+                    @csrf
+                    <button type="submit" class="logout-button">ログアウト</button>
+                </form>
             </nav>
         </div>
     </header>

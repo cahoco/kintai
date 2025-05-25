@@ -7,10 +7,11 @@ use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\AuthController;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/attendance/list', [AttendanceController::class, 'index']);
 Route::get('/attendance/{id}', [AttendanceController::class, 'show']);
-Route::get('/attendance', [AttendanceController::class, 'create']);
+Route::get('/attendance', [AttendanceController::class, 'create'])->name('attendance.create');
 
 Route::get('/stamp_correction_request/list', [RequestController::class, 'index']);
 Route::get('/stamp_correction_request/list', [RequestController::class, 'indexAdmin']);
@@ -33,3 +34,16 @@ Route::get('/login', [AuthController::class, 'showLoginForm']);
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
+Route::post('/admin/login', [AdminAuthController::class, 'login']);
+
+Route::post('/logout', function () {
+    Auth::logout(); // セッション削除
+    return redirect('/login')->with('success', 'ログアウトしました。');
+})->name('logout');
+
+
+Route::post('/attendance/clock-in', [AttendanceController::class, 'clockIn'])->name('attendance.clock_in');
+Route::post('/attendance/clock-out', [AttendanceController::class, 'clockOut'])->name('attendance.clock_out');
+Route::post('/attendance/break-start', [AttendanceController::class, 'breakStart'])->name('attendance.break_start');
+Route::post('/attendance/break-end', [AttendanceController::class, 'breakEnd'])->name('attendance.break_end');
+
