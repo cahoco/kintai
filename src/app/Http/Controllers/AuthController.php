@@ -55,4 +55,20 @@ class AuthController extends Controller
         ])->withInput();
     }
 
+    public function logout(Request $request)
+    {
+        $redirectTo = '/login';
+
+        if (Auth::check() && Auth::user()->is_admin) {
+            $redirectTo = '/admin/login';
+        }
+
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect($redirectTo);
+    }
+
 }
