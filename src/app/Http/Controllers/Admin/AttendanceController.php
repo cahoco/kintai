@@ -7,16 +7,23 @@ use Illuminate\Http\Request;
 
 class AttendanceController extends Controller
 {
-    public function index()
+
+    public function index(Request $request)
     {
-        // ダミーデータ
+        // 📅 日付指定があれば使い、なければ今日をデフォルトに
+        $date = $request->query('date', now()->toDateString());
+
+        // ダミーデータ（あとでDBと連携可）
         $attendances = [
             ['name' => '山田 太郎', 'start' => '09:00', 'end' => '18:00', 'break' => '1:00', 'total' => '8:00'],
             ['name' => '西 怜奈',     'start' => '09:00', 'end' => '18:00', 'break' => '1:00', 'total' => '8:00'],
             ['name' => '山本 歌吉',   'start' => '09:00', 'end' => '18:00', 'break' => '1:00', 'total' => '8:00'],
         ];
 
-        return view('admin.attendance.index', compact('attendances'));
+        return view('admin.attendance.index', [
+            'attendances' => $attendances,
+            'date' => $date
+        ]);
     }
 
     public function show($id)
