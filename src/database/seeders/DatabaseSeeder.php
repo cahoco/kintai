@@ -7,31 +7,32 @@ use App\Models\User;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     *
-     * @return void
-     */
     public function run()
-{
-    // 管理者1人（明示的に作成）
-    User::factory()->create([
-        'name' => '管理者',
-        'email' => 'admin@example.com',
-        'password' => bcrypt('00000000'), // ログインテスト用
-        'is_admin' => true,
-    ]);
+    {
+        // 管理者1人（重複チェック付き）
+        User::firstOrCreate(
+            ['email' => 'admin@example.com'],
+            [
+                'name' => '管理者',
+                'password' => bcrypt('00000000'),
+                'is_admin' => true,
+            ]
+        );
 
-    // 一般ユーザー（ログイン用）
-    User::factory()->create([
-        'name' => 'テスト',
-        'email' => 'test@example.com',
-        'password' => bcrypt('00000000'), // ログイン用パスワード
-        'is_admin' => false,
-    ]);
+        // 一般ユーザー（重複チェック付き）
+        User::firstOrCreate(
+            ['email' => 'test@example.com'],
+            [
+                'name' => 'テスト',
+                'password' => bcrypt('00000000'),
+                'is_admin' => false,
+            ]
+        );
 
-    // 一般ユーザー10人（is_admin: false はFactoryで既定）
-    User::factory()->count(10)->create();
-}
+        // ダミー一般ユーザー追加
+        \App\Models\User::factory()->count(10)->create();
 
+        // ✅ 勤怠データ＋休憩データのSeederを実行
+        $this->call(AttendanceSeeder::class);
+    }
 }

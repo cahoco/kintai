@@ -100,4 +100,32 @@ class RequestController extends Controller
             ->with('submitted', true);
     }
 
+    public function sharedIndex(Request $request)
+    {
+        $user = auth()->user();
+
+        if ($user->is_admin) {
+            // 管理者：すべての申請を取得
+            $requests = \App\Models\StampCorrectionRequest::with(['user', 'attendance'])
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            return view('admin.request.index', compact('requests'));
+        } else {
+            // 一般ユーザー：自分の申請のみ
+            $status = $request->query('status', '承認待ち');
+
+            $requests = \App\Models\StampCorrectionRequest::with(['attendance'])
+                ->where('user_id', $user->id)
+                ->where('status', $status)
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            return view('request.index', [
+                'requests' => $requests,
+                'currentStatus' => $status,
+            ]);
+        }
+    }
+
 }

@@ -5,10 +5,15 @@
 @endsection
 
 @section('content')
+@php
+    // 🔑 Fortifyの intended リダイレクト先を明示的にセット（管理者用）
+    session(['url.intended' => '/admin/attendance/list']);
+@endphp
+
 <div class="register-container">
     <h2 class="register-title">管理者ログイン</h2>
 
-    <form method="POST" action="{{ url('/admin/login') }}">
+    <form method="POST" action="{{ route('login') }}">
         @csrf
         <div class="form-group">
             <label for="email">メールアドレス</label>

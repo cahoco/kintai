@@ -7,7 +7,8 @@
 @section('content')
 <div class="page-wrapper">
     @php
-        $carbonDate = \Carbon\Carbon::parse($date);
+        use Carbon\Carbon;
+        $carbonDate = Carbon::parse($date);
         $prev = $carbonDate->copy()->subDay()->toDateString();
         $next = $carbonDate->copy()->addDay()->toDateString();
     @endphp
@@ -40,17 +41,38 @@
                 </tr>
             </thead>
             <tbody>
-                {{-- 仮データ --}}
-                @foreach (range(1, 7) as $i)
+                @forelse ($attendances as $attendance)
                 <tr>
-                    <td>山田 太郎</td>
-                    <td>09:00</td>
-                    <td>18:00</td>
-                    <td>1:00</td>
-                    <td>8:00</td>
-                    <td><a href="{{ url('/admin/attendance/' . $i) }}">詳細</a></td>
+                    <td>{{ $attendance->user->name ?? '不明' }}</td>
+                    <td>{{ $attendance->clock_in ? \Carbon\Carbon::parse($attendance->clock_in)->format('H:i') : '-' }}</td>
+                    <td>{{ $attendance->clock_out ? \Carbon\Carbon::parse($attendance->clock_out)->format('H:i') : '-' }}</td>
+                    <td>
+                        @php
+                            $totalBreakMinutes = $attendance->breakTimes->sum(function ($break) {
+                                return $break->break_end
+                                    ? \Carbon\Carbon::parse($break->break_end)->diffInMinutes($break->break_start)
+                                    : 0;
+                            });
+                            $breakFormatted = $totalBreakMinutes ? sprintf('%d:%02d', floor($totalBreakMinutes / 60), $totalBreakMinutes % 60) : '-';
+                        @endphp
+                        {{ $breakFormatted }}
+                    </td>
+                    <td>
+                        @if ($attendance->clock_in && $attendance->clock_out)
+                            @php
+                                $workMinutes = \Carbon\Carbon::parse($attendance->clock_out)->diffInMinutes($attendance->clock_in) - $totalBreakMinutes;
+                                $workFormatted = sprintf('%d:%02d', floor($workMinutes / 60), $workMinutes % 60);
+                            @endphp
+                            {{ $workFormatted }}
+                        @else
+                            -
+                        @endif
+                    </td>
+                    <td><a href="{{ url('/admin/attendance/' . $attendance->id) }}">詳細</a></td>
                 </tr>
-                @endforeach
+                @empty
+                <tr><td colspan="6">データがありません</td></tr>
+                @endforelse
             </tbody>
         </table>
     </div>

@@ -11,6 +11,9 @@ use Laravel\Fortify\Fortify;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Http\RedirectResponse;
 use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
+use Laravel\Fortify\Contracts\CreatesNewUsers;
+use App\Actions\Fortify\CreateNewUser;
+use Laravel\Fortify\Contracts\LogoutResponse;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -21,7 +24,7 @@ class FortifyServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // 🔐 ログイン処理のカスタマイズ（DBからユーザー取得＋パスワード確認）
+        // 🔐 ログイン処理のカスタマイズ
         Fortify::authenticateUsing(function (Request $request) {
             $user = User::where('email', $request->email)->first();
 
@@ -34,23 +37,49 @@ class FortifyServiceProvider extends ServiceProvider
             ]);
         });
 
-        // 🖥️ 自作ログイン・登録画面の指定
-        Fortify::loginView(fn () => view('auth.login'));
+        // ✅ URLによってログイン画面を切り替える
+        Fortify::loginView(function () {
+            return request()->is('admin/*')
+                ? view('admin.login')   // 管理者ログイン用
+                : view('auth.login');   // 一般ユーザー用
+        });
+
+        // 登録画面は共通で auth.register を使用
         Fortify::registerView(fn () => view('auth.register'));
 
+        // ✅ ログイン後のリダイレクト先を切り替え
         app()->singleton(LoginResponseContract::class, function () {
-        return new class implements LoginResponseContract {
-            public function toResponse($request): RedirectResponse
-            {
-                $user = auth()->user();
-
-                if ($user->is_admin) {
-                    return redirect()->intended('/admin/attendance/list'); // 管理者
+            return new class implements LoginResponseContract {
+                public function toResponse($request): RedirectResponse
+                {
+                    $user = auth()->user();
+                    return $user->is_admin
+                        ? redirect()->intended('/admin/attendance/list')
+                        : redirect()->intended('/attendance');
                 }
-
-                return redirect()->intended('/attendance'); // 一般ユーザー
-            }
             };
         });
+
+        // 登録処理のバインド
+        $this->app->singleton(CreatesNewUsers::class, CreateNewUser::class);
+
+        // ✅ ログアウト後のリダイレクトを明示（← ここを追加）
+        $this->app->singleton(LogoutResponse::class, function () {
+            return new class implements LogoutResponse {
+                public function toResponse($request): RedirectResponse
+                {
+                    // 直前のURLを参照
+                    $referer = $request->headers->get('referer');
+
+                    // 管理者ページからのログアウトか判定
+                    if ($referer && str_contains($referer, '/admin/')) {
+                        return redirect('/admin/login');
+                    }
+
+                    return redirect('/login');
+                }
+            };
+        });
+
     }
 }

@@ -4,31 +4,27 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Attendance;
 
 class AttendanceController extends Controller
 {
-
     public function index(Request $request)
     {
-        // 📅 日付指定があれば使い、なければ今日をデフォルトに
         $date = $request->query('date', now()->toDateString());
 
-        // ダミーデータ（あとでDBと連携可）
-        $attendances = [
-            ['name' => '山田 太郎', 'start' => '09:00', 'end' => '18:00', 'break' => '1:00', 'total' => '8:00'],
-            ['name' => '西 怜奈',     'start' => '09:00', 'end' => '18:00', 'break' => '1:00', 'total' => '8:00'],
-            ['name' => '山本 歌吉',   'start' => '09:00', 'end' => '18:00', 'break' => '1:00', 'total' => '8:00'],
-        ];
+        $attendances = Attendance::with('user') // ユーザー名も取得
+            ->where('date', $date)
+            ->orderBy('user_id')
+            ->get();
 
         return view('admin.attendance.index', [
             'attendances' => $attendances,
-            'date' => $date
+            'date' => $date,
         ]);
     }
 
     public function show($id)
     {
-        // ダミーデータ（$idは未使用）
         $attendance = [
             'name' => '西 怜奈',
             'date' => '2023年6月1日',
@@ -46,7 +42,6 @@ class AttendanceController extends Controller
 
     public function showByStaff($id)
     {
-        // 仮データ（後でDBと連携可能）
         $staff = [
             'id' => $id,
             'name' => '西 怜奈'
@@ -54,5 +49,4 @@ class AttendanceController extends Controller
 
         return view('admin.attendance.staff_index', compact('staff'));
     }
-
 }
