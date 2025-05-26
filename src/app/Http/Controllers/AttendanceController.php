@@ -36,19 +36,22 @@ class AttendanceController extends Controller
 
     public function show($id)
     {
-        $attendance = Attendance::with('breakTimes')->findOrFail($id);
+        $attendance = Attendance::with('breakTimes', 'user')->findOrFail($id);
 
-        // 自分の勤怠だけ閲覧可能にする（セキュリティ）
         if ($attendance->user_id !== Auth::id()) {
             abort(403, '許可されていないアクセスです');
         }
 
-        $user = Auth::user();
+        // 申請中の修正内容があれば取得
+        $correction = \App\Models\StampCorrectionRequest::where('attendance_id', $id)
+            ->where('user_id', Auth::id())
+            ->where('status', '承認待ち')
+            ->latest()
+            ->first();
 
         return view('attendance.show', [
-            'id' => $id,
             'attendance' => $attendance,
-            'user' => $user,
+            'correction' => $correction,
         ]);
     }
 
@@ -135,22 +138,31 @@ class AttendanceController extends Controller
         $user = Auth::user();
         $today = Carbon::today();
 
-        // 出勤記録を取得
         $attendance = Attendance::where('user_id', $user->id)
             ->whereDate('date', $today)
             ->first();
 
+        // 出勤していない or 退勤済みなら処理しない
         if (!$attendance || $attendance->clock_out) {
             return redirect()->route('attendance.create');
         }
 
-        // すでに未終了の休憩がある場合は新規作成しない
+        // すでに未終了の休憩があるなら処理しない
         $existingBreak = $attendance->breakTimes()->whereNull('break_end')->first();
         if ($existingBreak) {
             return redirect()->route('attendance.create');
         }
 
-        // 新規休憩レコードを作成
+        // ▼▼▼ 追加：出勤後すぐ（5分未満）なら休憩を許可しない ▼▼▼
+        if ($attendance->clock_in) {
+            $clockIn = Carbon::parse($attendance->clock_in);
+            $now = Carbon::now();
+            if ($clockIn->diffInMinutes($now) < 5) {
+                return redirect()->route('attendance.create')->with('error', '出勤直後の休憩はできません（5分以上経過後に操作してください）');
+            }
+        }
+
+        // 休憩開始記録を作成
         $attendance->breakTimes()->create([
             'break_start' => Carbon::now()->format('H:i:s'),
         ]);

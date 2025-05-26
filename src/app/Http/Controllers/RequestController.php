@@ -8,18 +8,23 @@ use App\Models\StampCorrectionRequest;
 
 class RequestController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $userId = auth()->id();
 
-        // 🔽 リレーションも一緒に取得
-        $requests = StampCorrectionRequest::with('user')
+        // クエリパラメータからステータス取得（デフォルトは 承認待ち）
+        $status = $request->query('status', '承認待ち');
+
+        $requests = StampCorrectionRequest::with(['user', 'attendance'])
             ->where('user_id', $userId)
-            ->orderBy('status')
+            ->where('status', $status)
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('request.index', compact('requests'));
+        return view('request.index', [
+            'requests' => $requests,
+            'currentStatus' => $status, // Blade 側で使う
+        ]);
     }
 
         public function indexAdmin()
@@ -76,7 +81,7 @@ class RequestController extends Controller
 
     public function store(CorrectionRequest $request, $id)
     {
-        \App\Models\StampCorrectionRequest::create([
+        StampCorrectionRequest::create([
             'attendance_id' => $id,
             'user_id' => auth()->id(),
             'clock_in' => $request->clock_in,
@@ -89,7 +94,10 @@ class RequestController extends Controller
             'status' => '承認待ち',
         ]);
 
-        return redirect('/stamp_correction_request/list');
+        // 勤怠詳細画面に「申請済み」状態で戻る
+        return redirect()
+            ->route('attendance.show', ['id' => $id])
+            ->with('submitted', true);
     }
 
 }

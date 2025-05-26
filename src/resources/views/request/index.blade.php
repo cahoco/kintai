@@ -5,14 +5,17 @@
 @endsection
 
 @section('content')
-<div class="container">
+<div class="page-wrapper">
     <h2 class="page-title">申請一覧</h2>
 
     <div class="tab-menu">
-        <a href="#" class="active">承認待ち</a>
-        <a href="#">承認済み</a>
-    </div>
+    <a href="{{ route('request.index', ['status' => '承認待ち']) }}"
+        class="{{ $currentStatus === '承認待ち' ? 'active' : '' }}">承認待ち</a>
+    <a href="{{ route('request.index', ['status' => '承認済み']) }}"
+        class="{{ $currentStatus === '承認済み' ? 'active' : '' }}">承認済み</a>
+</div>
 
+<div class="card request-card">
     <table class="request-table">
         <thead>
             <tr>
@@ -29,7 +32,7 @@
                 <tr>
                     <td>{{ $request->status }}</td>
                     <td>{{ $request->user->name }}</td>
-                    <td>{{ \Carbon\Carbon::parse($request->created_at)->format('Y/m/d') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($request->attendance->date)->format('Y/m/d') }}</td>
                     <td>{{ $request->note }}</td>
                     <td>{{ \Carbon\Carbon::parse($request->created_at)->format('Y/m/d') }}</td>
                     <td><a href="{{ route('attendance.show', ['id' => $request->attendance_id]) }}">詳細</a></td>
