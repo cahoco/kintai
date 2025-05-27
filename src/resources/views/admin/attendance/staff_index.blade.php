@@ -1,47 +1,35 @@
 @extends('layouts.app')
 
 @section('css')
-<link rel="stylesheet" href="{{ asset('css/index.css') }}">
+<link rel="stylesheet" href="{{ asset('css/index.css') }}?v={{ time() }}">
+<link rel="stylesheet" href="{{ asset('css/staff_index.css') }}?v={{ time() }}">
 @endsection
 
 @section('content')
-<div class="container">
-    <h2 class="page-title">{{ $staff['name'] }}さんの勤怠</h2>
+<div class="page-wrapper">
+    <h2 class="page-title">スタッフ一覧</h2>
 
-    <div class="month-switch">
-        <a href="#">← 前月</a>
-        <div><i class="fa fa-calendar"></i> 2023/06</div>
-        <a href="#">翌月 →</a>
-    </div>
-
-    <table class="attendance-table">
-        <thead>
-            <tr>
-                <th>日付</th>
-                <th>出勤</th>
-                <th>退勤</th>
-                <th>休憩</th>
-                <th>合計</th>
-                <th>詳細</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{-- ダミーデータ --}}
-            @foreach (range(1, 30) as $day)
-            <tr>
-                <td>06/{{ str_pad($day, 2, '0', STR_PAD_LEFT) }}({{ ['月','火','水','木','金','土','日'][($day + 5) % 7] }})</td>
-                <td>09:00</td>
-                <td>18:00</td>
-                <td>1:00</td>
-                <td>8:00</td>
-                <td><a href="#">詳細</a></td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-
-    <div class="submit-button">
-        <button>CSV出力</button>
+    <div class="card attendance-card">
+        <table class="staff-table">
+            <thead>
+                <tr>
+                    <th class="name-col">名前</th>
+                    <th class="email-col">メールアドレス</th>
+                    <th class="action-col">月次勤怠</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($staffList as $staff)
+                    <tr>
+                        <td class="name-col">{{ $staff->name }}</td>
+                        <td class="email-col">{{ $staff->email }}</td>
+                        <td class="action-col">
+                            <a href="/admin/attendance/staff/{{ $staff->id }}">詳細</a>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
 </div>
 @endsection

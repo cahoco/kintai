@@ -47,15 +47,16 @@ class FortifyServiceProvider extends ServiceProvider
         // 登録画面は共通で auth.register を使用
         Fortify::registerView(fn () => view('auth.register'));
 
-        // ✅ ログイン後のリダイレクト先を切り替え
+        // ✅ ログイン後のリダイレクト先を明示的に固定する
         app()->singleton(LoginResponseContract::class, function () {
             return new class implements LoginResponseContract {
                 public function toResponse($request): RedirectResponse
                 {
                     $user = auth()->user();
+
                     return $user->is_admin
-                        ? redirect()->intended('/admin/attendance/list')
-                        : redirect()->intended('/attendance');
+                        ? redirect('/admin/attendance/list')
+                        : redirect('/attendance');
                 }
             };
         });
