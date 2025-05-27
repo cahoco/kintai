@@ -25,17 +25,19 @@
             <tr>
                 <th>出勤・退勤</th>
                 <td class="value-cell">
-                    {{ $correction->clock_in }} ～ {{ $correction->clock_out }}
+                    {{ $correction->clock_in ? \Carbon\Carbon::parse($correction->clock_in)->format('H:i') : '-' }}
+                    ～
+                    {{ $correction->clock_out ? \Carbon\Carbon::parse($correction->clock_out)->format('H:i') : '-' }}
                 </td>
             </tr>
             <tr>
                 <th>休憩</th>
                 <td class="value-cell">
                     @if ($correction->break_start_1 && $correction->break_end_1)
-                        {{ $correction->break_start_1 }} ～ {{ $correction->break_end_1 }}<br>
+                        {{ \Carbon\Carbon::parse($correction->break_start_1)->format('H:i') }} ～ {{ \Carbon\Carbon::parse($correction->break_end_1)->format('H:i') }}<br>
                     @endif
                     @if ($correction->break_start_2 && $correction->break_end_2)
-                        {{ $correction->break_start_2 }} ～ {{ $correction->break_end_2 }}
+                        {{ \Carbon\Carbon::parse($correction->break_start_2)->format('H:i') }} ～ {{ \Carbon\Carbon::parse($correction->break_end_2)->format('H:i') }}
                     @endif
                 </td>
             </tr>

@@ -28,19 +28,16 @@ class AttendanceController extends Controller
 
     public function show($id)
     {
-        $attendance = [
-            'name' => '西 怜奈',
-            'date' => '2023年6月1日',
-            'start' => '09:00',
-            'end' => '18:00',
-            'break1_start' => '12:00',
-            'break1_end' => '13:00',
-            'break2_start' => '',
-            'break2_end' => '',
-            'note' => '電車遅延のため'
-        ];
+        $attendance = Attendance::with(['user', 'breakTimes'])->findOrFail($id);
 
-        return view('admin.attendance.show', compact('attendance'));
+        if (auth()->user()->is_admin) {
+            // 管理者用ビューを表示
+            return view('admin.attendance.show', compact('attendance'));
+        } else {
+            // 一般ユーザー用ビューを表示
+            $correction = $attendance->correctionRequest; // 申請があれば取得
+            return view('attendance.show', compact('attendance', 'correction'));
+        }
     }
 
     public function showByStaff($id, Request $request)
@@ -123,6 +120,42 @@ class AttendanceController extends Controller
         $response->headers->set('Content-Disposition', "attachment; filename={$csvFileName}");
 
         return $response;
+    }
+
+    public function update(Request $request, $id)
+    {
+        $attendance = Attendance::with('breakTimes')->findOrFail($id);
+
+        // 勤怠情報を更新
+        $attendance->clock_in = $request->input('clock_in');
+        $attendance->clock_out = $request->input('clock_out');
+        $attendance->note = $request->input('note');
+        $attendance->save();
+
+        // 既存の休憩を削除して再登録（2件まで）
+        $attendance->breakTimes()->delete();
+
+        if ($request->filled('break_start_1') && $request->filled('break_end_1')) {
+            $attendance->breakTimes()->create([
+                'break_start' => $request->input('break_start_1'),
+                'break_end' => $request->input('break_end_1'),
+            ]);
+        }
+
+        if ($request->filled('break_start_2') && $request->filled('break_end_2')) {
+            $attendance->breakTimes()->create([
+                'break_start' => $request->input('break_start_2'),
+                'break_end' => $request->input('break_end_2'),
+            ]);
+        }
+
+        $from = $request->input('from');
+
+        if ($from === 'staff') {
+        return redirect()->route('admin.attendance.staff', ['id' => $attendance->user_id])->with('success', '勤怠を更新しました');}
+
+        return redirect()->route('admin.attendance.index')->with('success', '勤怠を更新しました');
+
     }
 
 }

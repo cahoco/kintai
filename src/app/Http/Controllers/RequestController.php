@@ -62,19 +62,7 @@ class RequestController extends Controller
 
     public function showApprove($id)
     {
-        // 仮のダミーデータ（本番ではモデルで取得）
-        $request = (object)[
-            'id' => $id,
-            'user_name' => '西 怜奈',
-            'date' => '2023-06-01',
-            'start_time' => '09:00',
-            'end_time' => '18:00',
-            'break_start' => '12:00',
-            'break_end' => '13:00',
-            'break2_start' => '',
-            'break2_end' => '',
-            'note' => '電車遅延のため',
-        ];
+        $request = \App\Models\StampCorrectionRequest::with(['user', 'attendance'])->findOrFail($id);
 
         return view('admin.request.approve', compact('request'));
     }
@@ -104,17 +92,21 @@ class RequestController extends Controller
     {
         $user = auth()->user();
 
+        $status = $request->query('status', '承認待ち');
+
         if ($user->is_admin) {
-            // 管理者：すべての申請を取得
+            // 管理者：ステータスごとの申請一覧を取得
             $requests = \App\Models\StampCorrectionRequest::with(['user', 'attendance'])
+                ->where('status', $status)
                 ->orderBy('created_at', 'desc')
                 ->get();
 
-            return view('admin.request.index', compact('requests'));
+            return view('admin.request.index', [
+                'requests' => $requests,
+                'currentStatus' => $status,
+            ]);
         } else {
             // 一般ユーザー：自分の申請のみ
-            $status = $request->query('status', '承認待ち');
-
             $requests = \App\Models\StampCorrectionRequest::with(['attendance'])
                 ->where('user_id', $user->id)
                 ->where('status', $status)
@@ -126,6 +118,41 @@ class RequestController extends Controller
                 'currentStatus' => $status,
             ]);
         }
+    }
+
+    public function approve($id)
+    {
+        $request = StampCorrectionRequest::with('attendance')->findOrFail($id);
+
+        // 勤怠データを更新
+        $attendance = $request->attendance;
+        $attendance->clock_in = $request->clock_in;
+        $attendance->clock_out = $request->clock_out;
+        $attendance->note = $request->note;
+        $attendance->save();
+
+        // 休憩データを更新（削除して再作成）
+        $attendance->breakTimes()->delete();
+
+        if ($request->break_start_1 && $request->break_end_1) {
+            $attendance->breakTimes()->create([
+                'break_start' => $request->break_start_1,
+                'break_end' => $request->break_end_1,
+            ]);
+        }
+
+        if ($request->break_start_2 && $request->break_end_2) {
+            $attendance->breakTimes()->create([
+                'break_start' => $request->break_start_2,
+                'break_end' => $request->break_end_2,
+            ]);
+        }
+
+        // ステータスを「承認済み」に変更
+        $request->status = '承認済み';
+        $request->save();
+
+        return redirect()->route('request.index', ['status' => '承認待ち'])->with('success', '修正申請を承認しました。');
     }
 
 }

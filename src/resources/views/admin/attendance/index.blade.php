@@ -68,7 +68,7 @@
                             -
                         @endif
                     </td>
-                    <td><a href="{{ url('/admin/attendance/' . $attendance->id) }}">詳細</a></td>
+                    <td><a href="{{ route('attendance.show', ['id' => $attendance->id, 'from' => 'list']) }}">詳細</a></td>
                 </tr>
                 @empty
                 <tr><td colspan="6">データがありません</td></tr>

@@ -34,15 +34,27 @@ class AttendanceController extends Controller
         ]);
     }
 
-    public function show($id)
+    public function show($id, Request $request)
     {
         $attendance = Attendance::with('breakTimes', 'user')->findOrFail($id);
 
-        if ($attendance->user_id !== Auth::id()) {
+        // 一般ユーザーは自分以外の勤怠は閲覧不可
+        if (!Auth::user()->is_admin && $attendance->user_id !== Auth::id()) {
             abort(403, '許可されていないアクセスです');
         }
 
-        // 申請中の修正内容があれば取得
+        // どこから来たかを取得（staff一覧 or 日次一覧）
+        $from = $request->query('from', 'list'); // デフォルトは list（PG08）
+
+        // 管理者用
+        if (Auth::user()->is_admin) {
+            return view('admin.attendance.show', [
+                'attendance' => $attendance,
+                'from' => $from,
+            ]);
+        }
+
+        // 一般ユーザー用
         $correction = \App\Models\StampCorrectionRequest::where('attendance_id', $id)
             ->where('user_id', Auth::id())
             ->where('status', '承認待ち')
