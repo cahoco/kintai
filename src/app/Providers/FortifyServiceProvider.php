@@ -14,6 +14,8 @@ use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 use App\Actions\Fortify\CreateNewUser;
 use Laravel\Fortify\Contracts\LogoutResponse;
+use Laravel\Fortify\Contracts\VerifyEmailViewResponse;
+use App\Http\Responses\VerifyEmailViewResponse as CustomVerifyEmailViewResponse;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -81,6 +83,7 @@ class FortifyServiceProvider extends ServiceProvider
                 }
             };
         });
-
+    // ✅ メール認証画面のカスタムレスポンスを登録
+        $this->app->singleton(VerifyEmailViewResponse::class, CustomVerifyEmailViewResponse::class);
     }
 }

@@ -13,7 +13,7 @@ Route::get('/admin/login', [AuthenticatedSessionController::class, 'create'])
     ->name('admin.login');
 
 // 🧑‍💼 一般ユーザー専用ルート
-Route::middleware(['auth', 'user'])->group(function () {
+Route::middleware(['auth', 'user', 'verified'])->group(function () {
     Route::get('/attendance', [AttendanceController::class, 'create'])->name('attendance.create');
     Route::get('/attendance/list', [AttendanceController::class, 'index'])->name('attendance.index');
     Route::post('/attendance/{id}/request', [RequestController::class, 'store'])->name('request.store');

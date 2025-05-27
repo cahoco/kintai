@@ -62,3 +62,67 @@
     font-size: 14px;
     margin-top: 4px;
 }
+
+.verify-wrapper {
+    max-width: 600px;
+    height: 80vh;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; /* ← 中央寄せに必要 */
+    text-align: center;
+    gap: 30px; /* ← 上下の余白を整える */
+}
+
+.verify-message {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.verify-button {
+    width: 257px;
+    background-color: #d9d9d9;
+    color: black;
+    padding: 12px 28px;
+    border: 1px solid #000000;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 20px;
+    text-decoration: none;
+}
+
+.verify-button:hover {
+    background-color: #c9c9c9;
+}
+
+.verify-link {
+    display: block;
+    margin-top: 20px;
+    color: #007bff;
+    text-decoration: underline;
+    font-size: 14px;
+    border: none;
+}
+
+.verify-success {
+    color: green;
+    margin-top: 15px;
+}
+
+.verify-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px; /* ボタンとリンクの余白 */
+}
+
+.verify-actions form {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}

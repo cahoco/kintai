@@ -6,13 +6,19 @@
     <link rel="stylesheet" href="{{ asset('css/common.css') }}?v={{ time() }}">
     @yield('css')
 </head>
-<body class="body">
+
+@php
+    $bodyClass = Auth::check() ? 'body bg-logged-in' : 'body';
+@endphp
+
+<body class="{{ $bodyClass }}">
+
     @php
         use Illuminate\Support\Facades\Auth;
     @endphp
 
     {{-- ロゴ表示条件（ログイン中 or ログイン・登録・管理者ログイン画面） --}}
-    @if (Auth::check() || request()->is('login') || request()->is('register') || request()->is('admin/login'))
+    @if (Auth::check() || request()->is('login') || request()->is('register') || request()->is('admin/login') || request()->is('email/verify'))
         <header class="header">
             <div class="header-inner">
                 <a href="{{ Auth::check() && Auth::user()->is_admin ? '/admin/attendance/list' : '/attendance' }}" class="logo">
@@ -20,7 +26,7 @@
                 </a>
 
                 {{-- ✅ ナビ表示はログイン中のみ --}}
-                @if (Auth::check())
+                @if (Auth::check() && !request()->is('email/verify'))
                     @if (!Auth::user()->is_admin)
                         {{-- 一般ユーザー用ナビ --}}
                         <nav class="nav">
