@@ -14,6 +14,6 @@ class StaffController extends Controller
         $staffList = User::where('is_admin', false)->get();
 
         // Bladeファイルへ渡す
-        return view('admin.attendance.staff_index', compact('staffList'));
+        return view('admin.staff.index', compact('staffList'));
     }
 }

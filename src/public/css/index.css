@@ -109,3 +109,25 @@
     vertical-align: middle;
     margin-right: 6px;
 }
+
+.export-button-wrapper {
+    text-align: right;
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+.export-button {
+    background-color: #000;
+    color: #fff;
+    padding: 10px 30px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.export-button:hover {
+    background-color: #333;
+}

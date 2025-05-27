@@ -31,6 +31,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/staff/list', [StaffController::class, 'index'])->name('admin.staff.index');
     Route::get('/admin/attendance/staff/{id}', [AdminAttendanceController::class, 'showByStaff']);
     Route::get('/stamp_correction_request/approve/{id}', [RequestController::class, 'showApprove']);
+    Route::get('/admin/attendance/staff/{id}/export', [AdminAttendanceController::class, 'export'])->name('admin.attendance.staff.export');
 });
 
 // ✅ 共通ルート（申請一覧）
