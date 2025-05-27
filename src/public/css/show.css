@@ -21,7 +21,7 @@
 .detail-table {
     width: 100%;
     border-collapse: collapse;
-    table-layout: fixed; /* ←ボーダー整えやすくなる */
+    table-layout: fixed;
 }
 
 .detail-table th,

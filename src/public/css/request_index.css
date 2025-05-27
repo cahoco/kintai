@@ -46,7 +46,6 @@
     font-weight: bold;
 }
 
-/* ▼ ここが index.css の .attendance-table 相当（名称は request-table に） */
 .request-table {
     width: 100%;
     border-collapse: collapse;

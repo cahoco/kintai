@@ -22,7 +22,6 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
             'is_admin' => false,
         ];
-
     }
 
     /**
@@ -38,4 +37,5 @@ class UserFactory extends Factory
             ];
         });
     }
+
 }

@@ -7,7 +7,6 @@
 @section('content')
 <div class="detail-container">
     <h2 class="page-title">勤怠詳細</h2>
-
     <div class="detail-card">
         <table class="detail-table">
             <tr>
@@ -56,7 +55,6 @@
             </tr>
         </table>
     </div>
-
     <div class="submit-button right-align">
         @if ($request->status === '承認済み')
             <button type="button" disabled style="background-color: #999;">承認済み</button>
@@ -67,6 +65,5 @@
             </form>
         @endif
     </div>
-
 </div>
 @endsection

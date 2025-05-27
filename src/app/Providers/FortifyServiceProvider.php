@@ -16,6 +16,10 @@ use App\Actions\Fortify\CreateNewUser;
 use Laravel\Fortify\Contracts\LogoutResponse;
 use Laravel\Fortify\Contracts\VerifyEmailViewResponse;
 use App\Http\Responses\VerifyEmailViewResponse as CustomVerifyEmailViewResponse;
+use Laravel\Fortify\Http\Requests\LoginRequest as FortifyLoginRequest;
+use App\Http\Requests\LoginRequest;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\App;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -26,36 +30,45 @@ class FortifyServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // 🔐 ログイン処理のカスタマイズ
-        Fortify::authenticateUsing(function (Request $request) {
-            $user = User::where('email', $request->email)->first();
+        // ログイン処理のカスタマイズ
+        Fortify::authenticateUsing(function (FortifyLoginRequest $fortifyRequest) {
+            // LoginRequest を使って、Fortify のリクエスト内容を流し込む
+            $loginRequest = App::make(\App\Http\Requests\LoginRequest::class);
+            $loginRequest->setContainer(app())->setRedirector(app('redirect'));
+            $loginRequest->merge($fortifyRequest->all());
 
-            if ($user && Hash::check($request->password, $user->password)) {
+            // LoginRequest に基づいて手動バリデーション（rules/messages も有効）
+            Validator::make(
+                $loginRequest->all(),
+                $loginRequest->rules(),
+                $loginRequest->messages()
+            )->validate();
+
+            // 認証処理
+            $user = \App\Models\User::where('email', $fortifyRequest->email)->first();
+
+            if ($user && \Illuminate\Support\Facades\Hash::check($fortifyRequest->password, $user->password)) {
                 return $user;
             }
 
-            throw ValidationException::withMessages([
-                'email' => __('メールアドレスまたはパスワードが間違っています。'),
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'email' => 'メールアドレスまたはパスワードが間違っています。',
             ]);
         });
 
-        // ✅ URLによってログイン画面を切り替える
         Fortify::loginView(function () {
             return request()->is('admin/*')
-                ? view('admin.login')   // 管理者ログイン用
-                : view('auth.login');   // 一般ユーザー用
+                ? view('admin.login')
+                : view('auth.login');
         });
 
-        // 登録画面は共通で auth.register を使用
         Fortify::registerView(fn () => view('auth.register'));
 
-        // ✅ ログイン後のリダイレクト先を明示的に固定する
         app()->singleton(LoginResponseContract::class, function () {
             return new class implements LoginResponseContract {
                 public function toResponse($request): RedirectResponse
                 {
                     $user = auth()->user();
-
                     return $user->is_admin
                         ? redirect('/admin/attendance/list')
                         : redirect('/attendance');
@@ -63,27 +76,21 @@ class FortifyServiceProvider extends ServiceProvider
             };
         });
 
-        // 登録処理のバインド
         $this->app->singleton(CreatesNewUsers::class, CreateNewUser::class);
-
-        // ✅ ログアウト後のリダイレクトを明示（← ここを追加）
         $this->app->singleton(LogoutResponse::class, function () {
             return new class implements LogoutResponse {
                 public function toResponse($request): RedirectResponse
                 {
-                    // 直前のURLを参照
                     $referer = $request->headers->get('referer');
-
-                    // 管理者ページからのログアウトか判定
                     if ($referer && str_contains($referer, '/admin/')) {
                         return redirect('/admin/login');
                     }
-
                     return redirect('/login');
                 }
             };
         });
-    // ✅ メール認証画面のカスタムレスポンスを登録
+
         $this->app->singleton(VerifyEmailViewResponse::class, CustomVerifyEmailViewResponse::class);
     }
+
 }

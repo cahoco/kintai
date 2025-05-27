@@ -8,7 +8,6 @@
 @section('content')
 <div class="page-wrapper">
     <h2 class="page-title">スタッフ一覧</h2>
-
     <div class="card attendance-card">
         <table class="staff-table">
             <thead>

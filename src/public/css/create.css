@@ -29,15 +29,13 @@ body {
     margin-bottom: 30px;
 }
 
-/* 横並びにするためのラッパー */
 .button-row {
     display: flex;
     justify-content: center;
-    gap: 20px; /* ボタン間のスペース */
+    gap: 20px;
     margin-top: 20px;
 }
 
-/* 共通ボタンスタイル（既存のままでOK） */
 .stamp-button {
     font-size: 16px;
     font-weight: bold;
@@ -47,13 +45,11 @@ body {
     cursor: pointer;
 }
 
-/* 黒ボタン（退勤） */
 .stamp-button.black {
     background-color: #000;
     color: #fff;
 }
 
-/* 白ボタン（休憩） */
 .stamp-button.white {
     background-color: #fff;
     color: #000;

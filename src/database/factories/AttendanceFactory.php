@@ -16,10 +16,8 @@ class AttendanceFactory extends Factory
         $clockIn = Carbon::createFromTime(9, 0)->addMinutes($this->faker->numberBetween(0, 30));
         $clockOut = Carbon::createFromTime(18, 0)->addMinutes($this->faker->numberBetween(0, 30));
         $date = Carbon::today()->subDays($this->faker->numberBetween(0, 10))->toDateString();
-
         $user = User::inRandomOrder()->first();
         $userId = $user ? $user->id : 1;
-
         return [
             'user_id'   => $userId,
             'date'      => $date,

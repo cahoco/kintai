@@ -7,7 +7,6 @@
 @section('content')
 <div class="detail-container">
     <h2 class="page-title">勤怠詳細</h2>
-
     <form method="POST" action="{{ route('admin.attendance.update', ['id' => $attendance->id]) }}">
         @csrf
         <input type="hidden" name="from" value="{{ $from }}">
@@ -33,7 +32,6 @@
                         @error('clock_out')<div class="error">{{ $message }}</div>@enderror
                     </td>
                 </tr>
-
                 @php $breakCount = $attendance->breakTimes->count(); @endphp
                 @foreach ($attendance->breakTimes as $index => $break)
                     <tr>
@@ -49,8 +47,6 @@
                         </td>
                     </tr>
                 @endforeach
-
-                {{-- 空の休憩追加行 --}}
                 <tr>
                     <th>{{ $breakCount === 0 ? '休憩' : '休憩' . ($breakCount + 1) }}</th>
                     <td>
@@ -61,7 +57,6 @@
                         @error("break_end_" . ($breakCount + 1))<div class="error">{{ $message }}</div>@enderror
                     </td>
                 </tr>
-
                 <tr>
                     <th>備考</th>
                     <td>
@@ -71,7 +66,6 @@
                 </tr>
             </table>
         </div>
-
         <div class="submit-button right-align">
             <button type="submit">修正</button>
         </div>

@@ -8,7 +8,6 @@
     color: #737373;
 }
 
-/* ヘッダー */
 .staff-table th {
     padding: 10px;
     border-bottom: 3px solid #e1e1e1;
@@ -18,27 +17,23 @@
     text-align: center;
 }
 
-/* ボディ */
 .staff-table td {
     padding: 10px;
     border-bottom: 1px solid #e0e0e0;
     text-align: center;
 }
 
-/* 名前列：中央＋左に余白 */
 .staff-table th.name-col,
 .staff-table td.name-col {
     text-align: center;
     padding-left: 100px;
 }
 
-/* メールアドレス列：中央揃え */
 .staff-table th.email-col,
 .staff-table td.email-col {
     text-align: center;
 }
 
-/* 詳細列：中央＋右に余白 */
 .staff-table th.action-col,
 .staff-table td.action-col {
     text-align: center;

@@ -50,7 +50,6 @@ class CorrectionRequest extends FormRequest
             $clockIn = Carbon::createFromFormat('H:i', $this->clock_in);
             $clockOut = Carbon::createFromFormat('H:i', $this->clock_out);
 
-            // 勤務時間外に休憩が設定されていないか確認
             foreach ([1, 2] as $i) {
                 $start = $this->input("break_start_$i");
                 $end = $this->input("break_end_$i");
@@ -64,7 +63,6 @@ class CorrectionRequest extends FormRequest
                             $validator->errors()->add("break_start_$i", '休憩時間が勤務時間外です。');
                         }
                     } catch (\Exception $e) {
-                        // 無効な時刻はスキップ（他のバリデーションで弾くため）
                     }
                 }
             }

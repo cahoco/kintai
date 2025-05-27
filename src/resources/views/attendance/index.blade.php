@@ -7,7 +7,6 @@
 @section('content')
 <div class="page-wrapper">
     <h2 class="page-title">勤怠一覧</h2>
-
     <div class="card month-card">
         <a href="{{ route('attendance.index', ['month' => $prevMonth]) }}" class="prev-month">
             <img src="{{ asset('storage/images/left-arrow.png') }}" alt="前月" class="arrow-icon"> 前月
@@ -20,7 +19,6 @@
             翌月 <img src="{{ asset('storage/images/right-arrow.png') }}" alt="翌月" class="arrow-icon">
         </a>
     </div>
-
     <div class="card attendance-card">
         <table class="attendance-table">
             <thead>
@@ -73,7 +71,6 @@
                     <tr><td colspan="6">データがありません</td></tr>
                 @endforelse
             </tbody>
-
         </table>
     </div>
 </div>

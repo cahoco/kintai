@@ -7,14 +7,12 @@
 @section('content')
 <div class="page-wrapper">
     <h2 class="page-title">申請一覧</h2>
-
     <div class="tab-menu">
         <a href="{{ route('request.index', ['status' => '承認待ち']) }}"
             class="{{ $currentStatus === '承認待ち' ? 'active' : '' }}">承認待ち</a>
         <a href="{{ route('request.index', ['status' => '承認済み']) }}"
             class="{{ $currentStatus === '承認済み' ? 'active' : '' }}">承認済み</a>
     </div>
-
     <div class="card request-card">
         <table class="request-table">
             <thead>

@@ -70,9 +70,9 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center; /* ← 中央寄せに必要 */
+    align-items: center;
     text-align: center;
-    gap: 30px; /* ← 上下の余白を整える */
+    gap: 30px;
 }
 
 .verify-message {
@@ -118,7 +118,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px; /* ボタンとリンクの余白 */
+    gap: 20px;
 }
 
 .verify-actions form {

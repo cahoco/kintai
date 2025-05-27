@@ -31,16 +31,13 @@ class CreateNewUser implements CreatesNewUsers
             ],
             'password' => $this->passwordRules(),
         ])->validate();
-
         $user = User::create([
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
-            'is_admin' => false, // ← 明示的に一般ユーザーとして登録
+            'is_admin' => false,
         ]);
-
-        Auth::login($user); // ← 自動ログイン（必要であれば）
-
+        Auth::login($user);
         return $user;
     }
 

@@ -16,7 +16,6 @@ class Attendance extends Model
         'clock_out',
     ];
 
-    // ユーザーとのリレーション（逆参照）
     public function user()
     {
         return $this->belongsTo(User::class);
