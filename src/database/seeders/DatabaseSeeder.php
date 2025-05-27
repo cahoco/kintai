@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\User;
+use Carbon\Carbon;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,6 +16,7 @@ class DatabaseSeeder extends Seeder
                 'name' => '管理者',
                 'password' => bcrypt('00000000'),
                 'is_admin' => true,
+                'email_verified_at' => Carbon::now(),
             ]
         );
         User::firstOrCreate(
@@ -23,6 +25,7 @@ class DatabaseSeeder extends Seeder
                 'name' => 'テスト',
                 'password' => bcrypt('00000000'),
                 'is_admin' => false,
+                'email_verified_at' => Carbon::now(),
             ]
         );
         \App\Models\User::factory()->count(10)->create();
