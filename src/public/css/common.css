@@ -1,23 +1,40 @@
+/* ブラウザの余白をリセット */
+html,
+body {
+    margin: 0;
+    padding: 0;
+}
+
+/* ヘッダー自体をブラウザ幅いっぱいに */
 .header {
     background-color: #000;
     padding: 0;
     margin: 0;
-    width: 100vw;
 }
 
+/* 内側の配置調整 */
 .header-inner {
-    max-width: 1000px;
-    margin: 0 auto;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 20px;
+    padding: 10px 40px; /* 左右に広めの余白を与える */
+    box-sizing: border-box;
 }
 
+/* ロゴ画像を左端に揃える */
 .logo-img {
     height: 30px;
+    margin-left: 0;
 }
 
+/* ナビゲーションは右揃え */
+.nav {
+    display: flex;
+    align-items: center;
+}
+
+/* ナビ内のリンク間隔調整 */
 .nav a {
     color: white;
     text-decoration: none;
@@ -30,10 +47,10 @@
     background: none;
     border: none;
     color: white;
-    text-decoration: none;
     margin-left: 30px;
     font-size: 14px;
     font-weight: bold;
+    cursor: pointer;
 }
 
 .bg-logged-in {

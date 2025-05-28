@@ -16,8 +16,7 @@
             <tr>
                 <th>日付</th>
                 <td class="value-cell">
-                    {{ \Carbon\Carbon::parse($request->attendance->date)->format('Y年') }}　
-                    <span style="margin-left: 40px;">{{ \Carbon\Carbon::parse($request->attendance->date)->format('n月j日') }}</span>
+                    <span>{{ \Carbon\Carbon::parse($request->attendance->date)->format('Y年 n月j日') }}</span>
                 </td>
             </tr>
             <tr>
@@ -27,27 +26,18 @@
                     {{ \Carbon\Carbon::parse($request->clock_out)->format('H:i') }}
                 </td>
             </tr>
+            @foreach ($request->breakCorrections as $index => $break)
             <tr>
-                <th>休憩</th>
+                <th>{{ $index === 0 ? '休憩' : '休憩' . ($index + 1) }}</th>
                 <td class="value-cell">
-                    @if ($request->break_start_1 && $request->break_end_1)
-                        {{ \Carbon\Carbon::parse($request->break_start_1)->format('H:i') }} 〜
-                        {{ \Carbon\Carbon::parse($request->break_end_1)->format('H:i') }}
-                    @else
-                        - 〜 -
-                    @endif
+                    {{ \Carbon\Carbon::parse($break->break_start)->format('H:i') }} 〜 
+                    {{ \Carbon\Carbon::parse($break->break_end)->format('H:i') }}
                 </td>
             </tr>
+            @endforeach
             <tr>
-                <th>休憩2</th>
-                <td class="value-cell">
-                    @if ($request->break_start_2 && $request->break_end_2)
-                        {{ \Carbon\Carbon::parse($request->break_start_2)->format('H:i') }} 〜
-                        {{ \Carbon\Carbon::parse($request->break_end_2)->format('H:i') }}
-                    @else
-                        - 〜 -
-                    @endif
-                </td>
+                <th>休憩{{ $request->breakCorrections->count() + 1 }}</th>
+                <td class="value-cell"></td>
             </tr>
             <tr>
                 <th>備考</th>

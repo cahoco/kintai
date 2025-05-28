@@ -19,13 +19,11 @@ class CreateStampCorrectionRequestsTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->time('clock_in');
             $table->time('clock_out');
-            $table->time('break_start_1')->nullable();
-            $table->time('break_end_1')->nullable();
-            $table->time('break_start_2')->nullable();
-            $table->time('break_end_2')->nullable();
-            $table->string('note');
+            $table->string('note')->nullable();
             $table->string('status')->default('承認待ち');
             $table->timestamps();
+            $table->foreign('attendance_id')->references('id')->on('attendances')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

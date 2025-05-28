@@ -32,29 +32,30 @@
                         @error('clock_out')<div class="error">{{ $message }}</div>@enderror
                     </td>
                 </tr>
-                @php $breakCount = $attendance->breakTimes->count(); @endphp
-                @foreach ($attendance->breakTimes as $index => $break)
-                    <tr>
-                        <th>{{ $index === 0 ? '休憩' : '休憩' . ($index + 1) }}</th>
-                        <td>
-                            <input type="text" name="break_start_{{ $index + 1 }}"
-                                value="{{ old("break_start_$index", $break->break_start ? \Carbon\Carbon::parse($break->break_start)->format('H:i') : '') }}"> ～
-                            <input type="text" name="break_end_{{ $index + 1 }}"
-                                value="{{ old("break_end_$index", $break->break_end ? \Carbon\Carbon::parse($break->break_end)->format('H:i') : '') }}">
-                            <br>
-                            @error("break_start_$index")<div class="error">{{ $message }}</div>@enderror
-                            @error("break_end_$index")<div class="error">{{ $message }}</div>@enderror
-                        </td>
-                    </tr>
+                @php $i = 1; @endphp
+                @foreach ($attendance->breakTimes as $break)
+                <tr>
+                    <th>{{ $i === 1 ? '休憩' : '休憩' . $i }}</th>
+                    <td>
+                        <input type="text" name="break_start_{{ $i }}"
+                            value="{{ old("break_start_{$i}", \Carbon\Carbon::parse($break->break_start)->format('H:i')) }}"> ～
+                        <input type="text" name="break_end_{{ $i }}"
+                            value="{{ old("break_end_{$i}", \Carbon\Carbon::parse($break->break_end)->format('H:i')) }}">
+                        <br>
+                        @error("break_start_{$i}")<div class="error">{{ $message }}</div>@enderror
+                        @error("break_end_{$i}")<div class="error">{{ $message }}</div>@enderror
+                    </td>
+                </tr>
+                @php $i++; @endphp
                 @endforeach
                 <tr>
-                    <th>{{ $breakCount === 0 ? '休憩' : '休憩' . ($breakCount + 1) }}</th>
+                    <th>{{ $i === 1 ? '休憩' : '休憩' . $i }}</th>
                     <td>
-                        <input type="text" name="break_start_{{ $breakCount + 1 }}" value="{{ old("break_start_" . ($breakCount + 1)) }}"> ～
-                        <input type="text" name="break_end_{{ $breakCount + 1 }}" value="{{ old("break_end_" . ($breakCount + 1)) }}">
+                        <input type="text" name="break_start_{{ $i }}" value="{{ old("break_start_{$i}") }}"> ～
+                        <input type="text" name="break_end_{{ $i }}" value="{{ old("break_end_{$i}") }}">
                         <br>
-                        @error("break_start_" . ($breakCount + 1))<div class="error">{{ $message }}</div>@enderror
-                        @error("break_end_" . ($breakCount + 1))<div class="error">{{ $message }}</div>@enderror
+                        @error("break_start_{$i}")<div class="error">{{ $message }}</div>@enderror
+                        @error("break_end_{$i}")<div class="error">{{ $message }}</div>@enderror
                     </td>
                 </tr>
                 <tr>

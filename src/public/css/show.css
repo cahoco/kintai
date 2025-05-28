@@ -75,6 +75,25 @@
     letter-spacing: 1px;
 }
 
+.date-cell .year,
+.date-cell .month-day {
+    display: inline-block;
+    font-size: 14px;
+}
+
+.date-cell .year {
+    text-align: left;
+    flex: 1;
+    font-size: 14px;
+    margin-right: 60px;
+}
+
+.date-cell .month-day {
+    text-align: right;
+    flex: 1;
+    font-size: 14px;
+}
+
 .submit-button.right-align {
     text-align: right;
     margin-top: 30px;

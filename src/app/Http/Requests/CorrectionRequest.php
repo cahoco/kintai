@@ -14,43 +14,55 @@ class CorrectionRequest extends FormRequest
 
     public function rules(): array
     {
-        return [
+        $rules = [
             'clock_in' => ['required', 'date_format:H:i'],
             'clock_out' => ['required', 'date_format:H:i', 'after:clock_in'],
-            'break_start_1' => ['nullable', 'date_format:H:i'],
-            'break_end_1' => ['nullable', 'date_format:H:i', 'after:break_start_1'],
-            'break_start_2' => ['nullable', 'date_format:H:i'],
-            'break_end_2' => ['nullable', 'date_format:H:i', 'after:break_start_2'],
             'note' => ['required', 'string', 'max:255'],
         ];
+
+        // 休憩10件まで対応（必要に応じて増減OK）
+        for ($i = 1; $i <= 10; $i++) {
+            $rules["break_start_$i"] = ['nullable', 'date_format:H:i'];
+            $rules["break_end_$i"] = ['nullable', 'date_format:H:i', "after:break_start_$i"];
+        }
+
+        return $rules;
     }
 
     public function messages(): array
     {
-        return [
+        $messages = [
             'clock_in.required' => '出勤時刻を入力してください。',
             'clock_in.date_format' => '出勤時刻は「HH:MM」形式で入力してください。',
             'clock_out.required' => '退勤時刻を入力してください。',
             'clock_out.date_format' => '退勤時刻は「HH:MM」形式で入力してください。',
             'clock_out.after' => '出勤時間もしくは退勤時間が不適切な値です。',
-            'break_start_1.date_format' => '休憩開始は「HH:MM」形式で入力してください。',
-            'break_end_1.date_format' => '休憩終了は「HH:MM」形式で入力してください。',
-            'break_end_1.after' => '休憩終了は開始時刻より後にしてください。',
-            'break_start_2.date_format' => '休憩2の開始は「HH:MM」形式で入力してください。',
-            'break_end_2.date_format' => '休憩2の終了は「HH:MM」形式で入力してください。',
-            'break_end_2.after' => '休憩2の終了は開始時刻より後にしてください。',
             'note.required' => '備考を記入してください。',
             'note.max' => '備考は255文字以内で入力してください。',
         ];
+
+        for ($i = 1; $i <= 10; $i++) {
+            $messages["break_start_{$i}.date_format"] = "休憩{$i}の開始は「HH:MM」形式で入力してください。";
+            $messages["break_end_{$i}.date_format"] = "休憩{$i}の終了は「HH:MM」形式で入力してください。";
+            $messages["break_end_{$i}.after"] = "休憩{$i}の終了は開始時刻より後にしてください。";
+        }
+
+        return $messages;
     }
 
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
-            $clockIn = Carbon::createFromFormat('H:i', $this->clock_in);
-            $clockOut = Carbon::createFromFormat('H:i', $this->clock_out);
+            try {
+                $clockIn = Carbon::createFromFormat('H:i', $this->clock_in);
+                $clockOut = Carbon::createFromFormat('H:i', $this->clock_out);
+            } catch (\Exception $e) {
+                return;
+            }
 
-            foreach ([1, 2] as $i) {
+            $intervals = [];
+
+            for ($i = 1; $i <= 10; $i++) {
                 $start = $this->input("break_start_$i");
                 $end = $this->input("break_end_$i");
 
@@ -59,10 +71,22 @@ class CorrectionRequest extends FormRequest
                         $startTime = Carbon::createFromFormat('H:i', $start);
                         $endTime = Carbon::createFromFormat('H:i', $end);
 
+                        // 勤務時間外チェック
                         if ($startTime->lt($clockIn) || $endTime->gt($clockOut)) {
-                            $validator->errors()->add("break_start_$i", '休憩時間が勤務時間外です。');
+                            $validator->errors()->add("break_start_$i", "休憩時間が勤務時間外です。");
                         }
+
+                        // 重複チェック
+                        foreach ($intervals as $j => [$prevStart, $prevEnd]) {
+                            if ($startTime->lt($prevEnd) && $endTime->gt($prevStart)) {
+                                $validator->errors()->add("break_start_$i", "休憩{$i}が休憩" . ($j + 1) . "と重複しています。");
+                                break;
+                            }
+                        }
+
+                        $intervals[] = [$startTime, $endTime];
                     } catch (\Exception $e) {
+                        continue;
                     }
                 }
             }

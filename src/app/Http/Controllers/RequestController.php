@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\CorrectionRequest;
 use App\Models\StampCorrectionRequest;
+use App\Models\BreakCorrection;
 
 class RequestController extends Controller
 {
@@ -25,24 +26,32 @@ class RequestController extends Controller
 
     public function showApprove($id)
     {
-        $request = \App\Models\StampCorrectionRequest::with(['user', 'attendance'])->findOrFail($id);
+        $request = \App\Models\StampCorrectionRequest::with(['user', 'attendance', 'breakCorrections'])->findOrFail($id);
         return view('admin.request.approve', compact('request'));
     }
 
     public function store(CorrectionRequest $request, $id)
     {
-        StampCorrectionRequest::create([
+        $correction = StampCorrectionRequest::create([
             'attendance_id' => $id,
             'user_id' => auth()->id(),
             'clock_in' => $request->clock_in,
             'clock_out' => $request->clock_out,
-            'break_start_1' => $request->break_start_1,
-            'break_end_1' => $request->break_end_1,
-            'break_start_2' => $request->break_start_2,
-            'break_end_2' => $request->break_end_2,
             'note' => $request->note,
             'status' => '承認待ち',
         ]);
+        $index = 1;
+        while ($request->has("break_start_{$index}") || $request->has("break_end_{$index}")) {
+            $start = $request->input("break_start_{$index}");
+            $end = $request->input("break_end_{$index}");
+            if ($start && $end) {
+                $correction->breakCorrections()->create([
+                    'break_start' => $start,
+                    'break_end' => $end,
+                ]);
+            }
+            $index++;
+        }
         return redirect()
             ->route('attendance.show', ['id' => $id])
             ->with('submitted', true);
@@ -76,24 +85,20 @@ class RequestController extends Controller
 
     public function approve($id)
     {
-        $request = StampCorrectionRequest::with('attendance')->findOrFail($id);
+        $request = StampCorrectionRequest::with(['attendance', 'breakCorrections'])->findOrFail($id);
         $attendance = $request->attendance;
         $attendance->clock_in = $request->clock_in;
         $attendance->clock_out = $request->clock_out;
         $attendance->note = $request->note;
         $attendance->save();
-        $attendance->breakTimes()->delete();
-        if ($request->break_start_1 && $request->break_end_1) {
-            $attendance->breakTimes()->create([
-                'break_start' => $request->break_start_1,
-                'break_end' => $request->break_end_1,
-            ]);
-        }
-        if ($request->break_start_2 && $request->break_end_2) {
-            $attendance->breakTimes()->create([
-                'break_start' => $request->break_start_2,
-                'break_end' => $request->break_end_2,
-            ]);
+        if ($request->breakCorrections->isNotEmpty()) {
+            $attendance->breakTimes()->delete();
+            foreach ($request->breakCorrections as $break) {
+                $attendance->breakTimes()->create([
+                    'break_start' => $break->break_start,
+                    'break_end' => $break->break_end,
+                ]);
+            }
         }
         $request->status = '承認済み';
         $request->save();

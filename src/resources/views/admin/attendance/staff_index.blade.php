@@ -78,11 +78,12 @@
         </table>
     </div>
 
-    <input type="hidden" name="month" value="{{ $targetMonth }}">
-        <div class="export-button-wrapper">
-            <form action="{{ route('admin.attendance.staff.export', ['id' => $user->id]) }}" method="GET">
-                <button type="submit" class="export-button">CSV出力</button>
-            </form>
-        </div>
+    <div class="export-button-wrapper">
+        <form action="{{ route('admin.attendance.staff.export', ['id' => $user->id]) }}" method="GET">
+            <input type="hidden" name="month" value="{{ $targetMonth }}">
+            <button type="submit" class="export-button">CSV出力</button>
+        </form>
+    </div>
+
 </div>
 @endsection

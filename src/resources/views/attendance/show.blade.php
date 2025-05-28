@@ -17,7 +17,7 @@
             <tr>
                 <th>日付</th>
                 <td class="value-cell">
-                    <span>{{ \Carbon\Carbon::parse($attendance->date)->format('Y年n月j日') }}</span>
+                    <span>{{ \Carbon\Carbon::parse($attendance->date)->format('Y年 n月j日') }}</span>
                 </td>
             </tr>
             <tr>
@@ -28,17 +28,14 @@
                     {{ $correction->clock_out ? \Carbon\Carbon::parse($correction->clock_out)->format('H:i') : '-' }}
                 </td>
             </tr>
+            @foreach ($correction->breakCorrections ?? [] as $index => $break)
             <tr>
-                <th>休憩</th>
+                <th>{{ $index === 0 ? '休憩' : '休憩' . ($index + 1) }}</th>
                 <td class="value-cell">
-                    @if ($correction->break_start_1 && $correction->break_end_1)
-                        {{ \Carbon\Carbon::parse($correction->break_start_1)->format('H:i') }} ～ {{ \Carbon\Carbon::parse($correction->break_end_1)->format('H:i') }}<br>
-                    @endif
-                    @if ($correction->break_start_2 && $correction->break_end_2)
-                        {{ \Carbon\Carbon::parse($correction->break_start_2)->format('H:i') }} ～ {{ \Carbon\Carbon::parse($correction->break_end_2)->format('H:i') }}
-                    @endif
+                    {{ \Carbon\Carbon::parse($break->break_start)->format('H:i') }} ～ {{ \Carbon\Carbon::parse($break->break_end)->format('H:i') }}
                 </td>
             </tr>
+            @endforeach
             <tr>
                 <th>備考</th>
                 <td class="value-cell">{{ $correction->note }}</td>
@@ -59,8 +56,9 @@
                     </tr>
                     <tr>
                         <th>日付</th>
-                        <td class="value-cell">
-                            <span>{{ \Carbon\Carbon::parse($attendance->date)->format('Y年n月j日') }}</span>
+                        <td class="value-cell date-cell">
+                            <span class="year">{{ \Carbon\Carbon::parse($attendance->date)->format('Y年') }}</span>
+                            <span class="month-day">{{ \Carbon\Carbon::parse($attendance->date)->format('n月j日') }}</span>
                         </td>
                     </tr>
                     <tr>
@@ -75,17 +73,17 @@
                             @error('clock_out')<div class="error">{{ $message }}</div>@enderror
                         </td>
                     </tr>
-                    @php $breakCount = $attendance->breakTimes->count(); @endphp
-                    @foreach ($attendance->breakTimes as $index => $break)
+                    @php
+                        $breaks = $attendance->breakTimes;
+                    @endphp
+                    @foreach ($breaks as $index => $break)
                         <tr>
-                            <th>
-                                {{ $index === 0 ? '休憩' : '休憩' . ($index + 1) }}
-                            </th>
+                            <th>{{ $index === 0 ? '休憩' : '休憩' . ($index + 1) }}</th>
                             <td>
                                 <input type="text" name="break_start_{{ $index + 1 }}"
-                                    value="{{ old('break_start_' . ($index + 1), !empty($break->break_start) ? \Carbon\Carbon::parse($break->break_start)->format('H:i') : '') }}"> ～
+                                    value="{{ old("break_start_".($index + 1), \Carbon\Carbon::parse($break->break_start)->format('H:i')) }}"> ～
                                 <input type="text" name="break_end_{{ $index + 1 }}"
-                                    value="{{ old('break_end_' . ($index + 1), !empty($break->break_end) ? \Carbon\Carbon::parse($break->break_end)->format('H:i') : '') }}">
+                                    value="{{ old("break_end_".($index + 1), \Carbon\Carbon::parse($break->break_end)->format('H:i')) }}">
                                 <br>
                                 @error("break_start_" . ($index + 1))<div class="error">{{ $message }}</div>@enderror
                                 @error("break_end_" . ($index + 1))<div class="error">{{ $message }}</div>@enderror
@@ -93,13 +91,13 @@
                         </tr>
                     @endforeach
                     <tr>
-                        <th>{{ $breakCount === 0 ? '休憩' : '休憩' . ($breakCount + 1) }}</th>
+                        <th>{{ $breaks->count() === 0 ? '休憩' : '休憩' . ($breaks->count() + 1) }}</th>
                         <td>
-                            <input type="text" name="break_start_{{ $breakCount + 1 }}" value="{{ old('break_start_' . ($breakCount + 1)) }}"> ～
-                            <input type="text" name="break_end_{{ $breakCount + 1 }}" value="{{ old('break_end_' . ($breakCount + 1)) }}">
+                            <input type="text" name="break_start_{{ $breaks->count() + 1 }}" value="{{ old("break_start_" . ($breaks->count() + 1)) }}"> ～
+                            <input type="text" name="break_end_{{ $breaks->count() + 1 }}" value="{{ old("break_end_" . ($breaks->count() + 1)) }}">
                             <br>
-                            @error("break_start_" . ($breakCount + 1))<div class="error">{{ $message }}</div>@enderror
-                            @error("break_end_" . ($breakCount + 1))<div class="error">{{ $message }}</div>@enderror
+                            @error("break_start_" . ($breaks->count() + 1))<div class="error">{{ $message }}</div>@enderror
+                            @error("break_end_" . ($breaks->count() + 1))<div class="error">{{ $message }}</div>@enderror
                         </td>
                     </tr>
                     <tr>

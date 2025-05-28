@@ -32,4 +32,10 @@ class StampCorrectionRequest extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function breakCorrections()
+    {
+        return $this->hasMany(BreakCorrection::class);
+    }
+
 }

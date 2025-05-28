@@ -8,6 +8,7 @@ use App\Models\Attendance;
 use App\Models\User;
 use Carbon\Carbon;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use App\Http\Requests\CorrectionRequest;
 
 class AttendanceController extends Controller
 {
@@ -100,29 +101,44 @@ class AttendanceController extends Controller
         return $response;
     }
 
-    public function update(Request $request, $id)
+    public function update(CorrectionRequest $request, $id)
     {
         $attendance = Attendance::with('breakTimes')->findOrFail($id);
+
+        // 出退勤・備考を更新
         $attendance->clock_in = $request->input('clock_in');
         $attendance->clock_out = $request->input('clock_out');
         $attendance->note = $request->input('note');
         $attendance->save();
+
+        // 古い休憩データを削除
         $attendance->breakTimes()->delete();
-        if ($request->filled('break_start_1') && $request->filled('break_end_1')) {
-            $attendance->breakTimes()->create([
-                'break_start' => $request->input('break_start_1'),
-                'break_end' => $request->input('break_end_1'),
-            ]);
+
+        // 入力された休憩を全てループで保存
+        $index = 1;
+        while (
+            $request->has("break_start_{$index}") ||
+            $request->has("break_end_{$index}")
+        ) {
+            $start = $request->input("break_start_{$index}");
+            $end = $request->input("break_end_{$index}");
+
+            // 両方埋まっていたときだけ保存
+            if ($start && $end) {
+                $attendance->breakTimes()->create([
+                    'break_start' => $start,
+                    'break_end' => $end,
+                ]);
+            }
+
+            $index++;
         }
-        if ($request->filled('break_start_2') && $request->filled('break_end_2')) {
-            $attendance->breakTimes()->create([
-                'break_start' => $request->input('break_start_2'),
-                'break_end' => $request->input('break_end_2'),
-            ]);
-        }
+
+        // リダイレクト先の分岐
         $from = $request->input('from');
         if ($from === 'staff') {
-        return redirect()->route('admin.attendance.staff', ['id' => $attendance->user_id]);}
+            return redirect()->route('admin.attendance.staff', ['id' => $attendance->user_id]);
+        }
         return redirect()->route('admin.attendance.index');
     }
 
