@@ -60,24 +60,24 @@ php artisan storage:link
 
 ## ログイン
 
-* 一般ユーザー
+#### ◆一般ユーザー
 ブラウザで http://localhost/login にアクセス
 - メールアドレス：test@example.com
 - パスワード：00000000
 
-* 管理者
+#### ◆管理者
 ブラウザで http://localhost/admin/login にアクセス
 - メールアドレス：admin@example.com
 - パスワード：00000000
 
 
-## テスト実行
+## テスト実行（まだ未確認2025/05/28）
 
 ```
 php artisan test
 ```
 
-## 使用技術
+## 使用技術（まだ未確認2025/05/28）
 
 - PHP 8.2.28
 - Laravel 8.83.29
