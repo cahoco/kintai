@@ -1,4 +1,4 @@
-# coachtech-mock
+# kintai
 
 このリポジトリは、Laravel を用いた模擬勤怠管理アプリのプロジェクトです。
 
