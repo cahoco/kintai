@@ -17,7 +17,9 @@ use Laravel\Fortify\Contracts\LogoutResponse;
 use Laravel\Fortify\Contracts\VerifyEmailViewResponse;
 use App\Http\Responses\VerifyEmailViewResponse as CustomVerifyEmailViewResponse;
 use Laravel\Fortify\Http\Requests\LoginRequest as FortifyLoginRequest;
+use Laravel\Fortify\Http\Requests\RegisterRequest as FortifyRegisterRequest;
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\AdminLoginRequest;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\App;
 
@@ -32,19 +34,24 @@ class FortifyServiceProvider extends ServiceProvider
     {
         // ログイン処理のカスタマイズ
         Fortify::authenticateUsing(function (FortifyLoginRequest $fortifyRequest) {
-            // LoginRequest を使って、Fortify のリクエスト内容を流し込む
-            $loginRequest = App::make(\App\Http\Requests\LoginRequest::class);
-            $loginRequest->setContainer(app())->setRedirector(app('redirect'));
-            $loginRequest->merge($fortifyRequest->all());
+            // 🔽 管理者URLかどうかで使うFormRequestを切り替え
+            $requestClass = request()->is('admin/*')
+                ? AdminLoginRequest::class
+                : LoginRequest::class;
 
-            // LoginRequest に基づいて手動バリデーション（rules/messages も有効）
+            // 🔽 インスタンス生成 & Fortifyの値を注入
+            $customRequest = App::make($requestClass);
+            $customRequest->setContainer(app())->setRedirector(app('redirect'));
+            $customRequest->merge($fortifyRequest->all());
+
+            // 🔽 手動バリデーション（rules + messages 使用）
             Validator::make(
-                $loginRequest->all(),
-                $loginRequest->rules(),
-                $loginRequest->messages()
+                $customRequest->all(),
+                $customRequest->rules(),
+                $customRequest->messages()
             )->validate();
 
-            // 認証処理
+            // 🔽 認証処理
             $user = \App\Models\User::where('email', $fortifyRequest->email)->first();
 
             if ($user && \Illuminate\Support\Facades\Hash::check($fortifyRequest->password, $user->password)) {
@@ -91,6 +98,7 @@ class FortifyServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton(VerifyEmailViewResponse::class, CustomVerifyEmailViewResponse::class);
+        app()->bind(FortifyLoginRequest::class, LoginRequest::class);
     }
 
 }
