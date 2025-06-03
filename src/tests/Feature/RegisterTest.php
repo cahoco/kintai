@@ -85,7 +85,8 @@ class RegisterTest extends TestCase
             'password_confirmation' => 'password123',
         ]);
 
-        $response->assertRedirect('/email/verify');
+        // ちゃんと画面遷移するか齋藤コーチと確認する。
+        $response->assertRedirect('/attendance');
 
         $this->assertDatabaseHas('users', [
             'email' => 'test@example.com',

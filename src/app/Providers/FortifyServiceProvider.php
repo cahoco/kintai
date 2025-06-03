@@ -76,6 +76,12 @@ class FortifyServiceProvider extends ServiceProvider
                 public function toResponse($request): RedirectResponse
                 {
                     $user = auth()->user();
+
+                    // ✅ メール認証が未完了なら /email/verify に飛ばす
+                    if (! $user->hasVerifiedEmail()) {
+                        return redirect('/email/verify');
+                    }
+
                     return $user->is_admin
                         ? redirect('/admin/attendance/list')
                         : redirect('/attendance');
@@ -99,6 +105,7 @@ class FortifyServiceProvider extends ServiceProvider
 
         $this->app->singleton(VerifyEmailViewResponse::class, CustomVerifyEmailViewResponse::class);
         app()->bind(FortifyLoginRequest::class, LoginRequest::class);
+
     }
 
 }

@@ -30,8 +30,6 @@ class CreateNewUser implements CreatesNewUsers
             'is_admin' => false,
         ]);
 
-        Auth::login($user);
-
         return $user;
     }
 }

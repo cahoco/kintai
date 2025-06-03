@@ -6,10 +6,22 @@ use App\Http\Controllers\RequestController;
 use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
 use App\Http\Controllers\Admin\StaffController;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
+use App\Http\Controllers\VerifyEmailController;
 
 Route::get('/admin/login', [AuthenticatedSessionController::class, 'create'])
     ->middleware(['guest'])
     ->name('admin.login');
+
+    // 🔽 メール認証画面のルート（認証済ユーザーなら誰でもOK）
+Route::middleware(['auth'])->group(function () {
+    Route::get('/email/verify', [VerifyEmailController::class, 'notice'])->name('verification.notice');
+    Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, 'verify'])
+        ->middleware(['signed', 'throttle:6,1'])
+        ->name('verification.verify');
+    Route::post('/email/verification-notification', [VerifyEmailController::class, 'resend'])
+        ->middleware('throttle:6,1')
+        ->name('verification.send');
+});
 
 Route::middleware(['auth', 'user', 'verified'])->group(function () {
     Route::get('/attendance', [AttendanceController::class, 'create'])->name('attendance.create');
