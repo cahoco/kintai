@@ -88,6 +88,7 @@ php artisan test
 - Mailhog（メール認証テスト用）
 
 ## テーブル設計
+<img width="602" alt="kintai_table" src="https://github.com/user-attachments/assets/ce773592-eee3-4eb5-8ad1-8f35c0fd1a12" />
 
 ## ER図
 
