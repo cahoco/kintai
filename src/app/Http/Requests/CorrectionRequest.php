@@ -15,13 +15,13 @@ class CorrectionRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'clock_in' => ['required', 'date_format:H:i'],
-            'clock_out' => ['required', 'date_format:H:i', 'after:clock_in'],
-            'note' => ['required', 'string', 'max:255'],
+            'clock_in' => 'required|date_format:H:i',
+            'clock_out' => 'required|date_format:H:i|after:clock_in',
+            'note' => 'required|string|max:255',
         ];
         for ($i = 1; $i <= 10; $i++) {
-            $rules["break_start_$i"] = ['nullable', 'date_format:H:i'];
-            $rules["break_end_$i"] = ['nullable', 'date_format:H:i', "after:break_start_$i"];
+            $rules["break_start_$i"] = 'nullable|date_format:H:i';
+            $rules["break_end_$i"] = "nullable|date_format:H:i|after:break_start_$i";
         }
         return $rules;
     }

@@ -7,7 +7,7 @@ use App\Models\Attendance;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class AdminAttendanceUpdateTest extends TestCase
+class AdminAttendanceDetailTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -84,7 +84,7 @@ class AdminAttendanceUpdateTest extends TestCase
             'note' => '修正',
         ]);
         $response->assertSessionHasErrors([
-            'break_start_1' => '出勤時間もしくは退勤時間が不適切な値です。',
+            'break_end_1' => '出勤時間もしくは退勤時間が不適切な値です。',
         ]);
     }
 

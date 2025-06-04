@@ -15,15 +15,13 @@ class CreateStampCorrectionRequestsTable extends Migration
     {
         Schema::create('stamp_correction_requests', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('attendance_id');
-            $table->unsignedBigInteger('user_id');
+            $table->foreignId('attendance_id')->constrained('attendances')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->time('clock_in');
             $table->time('clock_out');
-            $table->string('note')->nullable();
-            $table->string('status')->default('承認待ち');
+            $table->string('note');
+            $table->enum('status', ['承認待ち', '承認済み', '却下'])->default('承認待ち');
             $table->timestamps();
-            $table->foreign('attendance_id')->references('id')->on('attendances')->onDelete('cascade');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

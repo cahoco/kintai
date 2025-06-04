@@ -39,17 +39,13 @@ class AdminLoginTest extends TestCase
     /** @test */
     public function 管理者ログイン_認証情報が間違っていればエラーメッセージが表示される()
     {
-        $user = User::factory()->create([
-            'email' => 'admin@example.com',
-            'password' => bcrypt('password123'),
-            'is_admin' => true,
-        ]);
         $response = $this->from('/admin/login')->post('/admin/login', [
             'email' => 'wrong@example.com',
             'password' => 'password123',
         ]);
         $response->assertRedirect('/admin/login');
-        $response->assertSessionHasErrors(['email']);
-        $this->assertStringContainsString('ログイン情報が登録されていません', session('errors')->first('email'));
+        $response = $this->followRedirects($response);
+        $response->assertSee('ログイン情報が登録されていません');
     }
+
 }
