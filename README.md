@@ -7,7 +7,7 @@
 #### Dockerビルド
 
 1. ```git clone git@github.com:cahoco/kintai.git```
-2. ```cd coachtech-mock```
+2. ```cd kintai```
 3. ```code .```
 4. ```docker compose up -d```
 
