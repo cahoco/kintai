@@ -74,8 +74,10 @@ php artisan storage:link
 ## テスト実行
 
 ```
+//テスト用データベースの作成
 docker compose exec mysql bash
 mysql -u root -p
+//パスワードはrootと入力
 create database test_database;
 exit;
 exit
