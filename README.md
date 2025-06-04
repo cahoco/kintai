@@ -77,7 +77,7 @@ php artisan storage:link
 php artisan test
 ```
 
-## 使用技術（まだ未確認2025/05/28）
+## 使用技術
 
 - PHP 8.2.28
 - Laravel 8.83.29
