@@ -24,18 +24,14 @@ class BreakTimeTest extends TestCase
     {
         $user = User::factory()->create();
         $this->actingAsWithDate($user);
-
         Attendance::create([
             'user_id' => $user->id,
             'date' => Carbon::today()->toDateString(),
             'clock_in' => '09:00:00',
         ]);
-
         $responseBefore = $this->get('/attendance');
         $responseBefore->assertSee('休憩入');
-
         $this->post('/attendance/break-start');
-
         $responseAfter = $this->get('/attendance');
         $responseAfter->assertSee('休憩中');
     }
@@ -45,18 +41,13 @@ class BreakTimeTest extends TestCase
     {
         $user = User::factory()->create();
         $this->actingAsWithDate($user);
-
         $attendance = Attendance::create([
             'user_id' => $user->id,
             'date' => Carbon::today()->toDateString(),
             'clock_in' => '09:00:00',
         ]);
-
-        // 1回目の休憩入・戻
         $this->post('/attendance/break-start');
         $this->post('/attendance/break-end');
-
-        // 再度の休憩入
         $response = $this->get('/attendance');
         $response->assertSee('休憩入');
     }
@@ -66,20 +57,15 @@ class BreakTimeTest extends TestCase
     {
         $user = User::factory()->create();
         $this->actingAsWithDate($user);
-
         $attendance = Attendance::create([
             'user_id' => $user->id,
             'date' => Carbon::today()->toDateString(),
             'clock_in' => '09:00:00',
         ]);
-
         $this->post('/attendance/break-start');
-
         $responseDuring = $this->get('/attendance');
         $responseDuring->assertSee('休憩戻');
-
         $this->post('/attendance/break-end');
-
         $responseAfter = $this->get('/attendance');
         $responseAfter->assertSee('出勤中');
     }
@@ -89,18 +75,13 @@ class BreakTimeTest extends TestCase
     {
         $user = User::factory()->create();
         $this->actingAsWithDate($user);
-
         $attendance = Attendance::create([
             'user_id' => $user->id,
             'date' => Carbon::today()->toDateString(),
             'clock_in' => '09:00:00',
         ]);
-
-        // 1回目
         $this->post('/attendance/break-start');
         $this->post('/attendance/break-end');
-
-        // 2回目
         $this->post('/attendance/break-start');
         $response = $this->get('/attendance');
         $response->assertSee('休憩戻');
@@ -111,19 +92,16 @@ class BreakTimeTest extends TestCase
     {
         $user = User::factory()->create();
         $this->actingAsWithDate($user);
-
         $attendance = Attendance::create([
             'user_id' => $user->id,
             'date' => Carbon::today()->toDateString(),
             'clock_in' => '09:00:00',
             'clock_out' => '18:00:00',
         ]);
-
         $attendance->breakTimes()->create([
             'break_start' => '12:00:00',
             'break_end' => '12:30:00',
         ]);
-
         $this->actingAs($user);
         $response = $this->get('/attendance/list');
         $response->assertSee('0:30');

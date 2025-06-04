@@ -14,16 +14,11 @@ class AttendanceDateTest extends TestCase
     /** @test */
     public function 勤怠打刻画面に現在の日時が表示されている()
     {
-        Carbon::setTestNow(Carbon::create(2025, 5, 29, 18, 32)); // テスト時刻を固定
-
+        Carbon::setTestNow(Carbon::create(2025, 5, 29, 18, 32));
         $user = User::factory()->create();
         $this->actingAs($user);
-
         $response = $this->get('/attendance');
-
         $response->assertStatus(200);
-
-        // 🔽 Bladeで使っている日付表示に合わせて修正！
         $response->assertSee('2025年5月29日(木)');
         $response->assertSee('18:32');
     }

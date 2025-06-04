@@ -11,11 +11,9 @@ use App\Http\Controllers\VerifyEmailController;
 Route::get('/admin/login', [AuthenticatedSessionController::class, 'create'])
     ->middleware(['guest'])
     ->name('admin.login');
-
 Route::post('/admin/login', [AuthenticatedSessionController::class, 'store'])
     ->middleware(['guest']);
 
-    // 🔽 メール認証画面のルート（認証済ユーザーなら誰でもOK）
 Route::middleware(['auth'])->group(function () {
     Route::get('/email/verify', [VerifyEmailController::class, 'notice'])->name('verification.notice');
     Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, 'verify'])

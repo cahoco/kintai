@@ -6,7 +6,6 @@
 
 @section('content')
 @php
-    // 🔑 Fortifyの intended リダイレクト先を明示的にセット（管理者用）
     session(['url.intended' => '/admin/attendance/list']);
 @endphp
 <div class="register-container">

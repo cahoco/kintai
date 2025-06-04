@@ -30,7 +30,7 @@
             <tr>
                 <th>{{ $index === 0 ? '休憩' : '休憩' . ($index + 1) }}</th>
                 <td class="value-cell">
-                    {{ \Carbon\Carbon::parse($break->break_start)->format('H:i') }} 〜 
+                    {{ \Carbon\Carbon::parse($break->break_start)->format('H:i') }} 〜
                     {{ \Carbon\Carbon::parse($break->break_end)->format('H:i') }}
                 </td>
             </tr>

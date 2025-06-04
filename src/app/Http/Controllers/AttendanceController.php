@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Attendance;
 use Carbon\Carbon;
-use App\Models\BreakTime;
 
 class AttendanceController extends Controller
 {
@@ -42,7 +41,7 @@ class AttendanceController extends Controller
                 'from' => $from,
             ]);
         }
-        $correction = \App\Models\StampCorrectionRequest::where('attendance_id', $id)
+        $correction = StampCorrectionRequest::where('attendance_id', $id)
             ->where('user_id', Auth::id())
             ->where('status', '承認待ち')
             ->latest()
@@ -77,11 +76,9 @@ class AttendanceController extends Controller
         $todayDate = Carbon::now()->toDateString();
         $todayText = Carbon::now()->isoFormat('YYYY年M月D日(ddd)');
         $now = Carbon::now()->format('H:i');
-
         $attendance = Attendance::where('user_id', $user->id)
             ->whereDate('date', $todayDate)
             ->first();
-
         $status = '勤務外';
         if ($attendance) {
             $hasBreak = $attendance->breakTimes()->whereNull('break_end')->exists();
@@ -93,7 +90,6 @@ class AttendanceController extends Controller
                 $status = '出勤中';
             }
         }
-
         return view('attendance.create', [
             'status' => $status,
             'today' => $todayText,

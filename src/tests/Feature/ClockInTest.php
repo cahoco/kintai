@@ -23,12 +23,9 @@ class ClockInTest extends TestCase
     {
         $user = User::factory()->create();
         $this->actingAsWithDate($user);
-
         $responseBefore = $this->get('/attendance');
         $responseBefore->assertSee('出勤');
-
         $this->post('/attendance/clock-in');
-
         $responseAfter = $this->get('/attendance');
         $responseAfter->assertSee('出勤中');
     }
@@ -38,14 +35,12 @@ class ClockInTest extends TestCase
     {
         $user = User::factory()->create();
         $this->actingAsWithDate($user, '2025-05-29 18:00:00');
-
         Attendance::create([
             'user_id' => $user->id,
             'date' => Carbon::today()->toDateString(),
             'clock_in' => '09:00:00',
             'clock_out' => '18:00:00',
         ]);
-
         $response = $this->get('/attendance');
         $response->assertDontSee('出勤');
     }
@@ -55,17 +50,14 @@ class ClockInTest extends TestCase
     {
         $admin = User::factory()->create(['is_admin' => true]);
         $staff = User::factory()->create();
-
         Carbon::setTestNow(Carbon::create(2025, 5, 29, 9, 0));
         Attendance::create([
             'user_id' => $staff->id,
             'date' => Carbon::today()->toDateString(),
             'clock_in' => '09:00:00',
         ]);
-
         $this->actingAs($admin);
         $response = $this->get('/admin/attendance/staff/' . $staff->id);
-
         $response->assertSee('09:00');
     }
 }

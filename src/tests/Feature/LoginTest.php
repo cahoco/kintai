@@ -16,12 +16,10 @@ class LoginTest extends TestCase
         $user = User::factory()->create([
             'password' => bcrypt('password123'),
         ]);
-
         $response = $this->from('/login')->post('/login', [
             'email' => '',
             'password' => 'password123',
         ]);
-
         $response->assertRedirect('/login');
         $response->assertSessionHasErrors(['email']);
         $this->assertStringContainsString('メールアドレスを入力してください', session('errors')->first('email'));
@@ -33,12 +31,10 @@ class LoginTest extends TestCase
         $user = User::factory()->create([
             'password' => bcrypt('password123'),
         ]);
-
         $response = $this->from('/login')->post('/login', [
             'email' => $user->email,
             'password' => '',
         ]);
-
         $response->assertRedirect('/login');
         $response->assertSessionHasErrors(['password']);
         $this->assertStringContainsString('パスワードを入力してください', session('errors')->first('password'));
@@ -51,12 +47,10 @@ class LoginTest extends TestCase
             'email' => 'correct@example.com',
             'password' => bcrypt('password123'),
         ]);
-
         $response = $this->from('/login')->post('/login', [
             'email' => 'wrong@example.com',
             'password' => 'password123',
         ]);
-
         $response->assertRedirect('/login');
         $response->assertSessionHasErrors(['email']);
         $this->assertStringContainsString('ログイン情報が登録されていません', session('errors')->first('email'));

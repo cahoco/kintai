@@ -19,12 +19,10 @@ class CorrectionRequest extends FormRequest
             'clock_out' => ['required', 'date_format:H:i', 'after:clock_in'],
             'note' => ['required', 'string', 'max:255'],
         ];
-
         for ($i = 1; $i <= 10; $i++) {
             $rules["break_start_$i"] = ['nullable', 'date_format:H:i'];
             $rules["break_end_$i"] = ['nullable', 'date_format:H:i', "after:break_start_$i"];
         }
-
         return $rules;
     }
 
@@ -39,13 +37,11 @@ class CorrectionRequest extends FormRequest
             'note.required' => '備考を記入してください。',
             'note.max' => '備考は255文字以内で入力してください。',
         ];
-
         for ($i = 1; $i <= 10; $i++) {
             $messages["break_start_{$i}.date_format"] = "休憩{$i}の開始は「HH:MM」形式で入力してください。";
             $messages["break_end_{$i}.date_format"] = "休憩{$i}の終了は「HH:MM」形式で入力してください。";
             $messages["break_end_{$i}.after"] = "休憩{$i}の終了は開始時刻より後にしてください。";
         }
-
         return $messages;
     }
 
@@ -58,33 +54,26 @@ class CorrectionRequest extends FormRequest
             } catch (\Exception $e) {
                 return;
             }
-
             $intervals = [];
-
             for ($i = 1; $i <= 10; $i++) {
                 $start = $this->input("break_start_$i");
                 $end = $this->input("break_end_$i");
-
                 if ($start && $end) {
                     try {
                         $startTime = Carbon::createFromFormat('H:i', $start);
                         $endTime = Carbon::createFromFormat('H:i', $end);
-
                         if ($startTime->gt($clockOut)) {
                             $validator->errors()->add("break_start_$i", "休憩時間が不適切な値です。");
                         }
-
                         if ($endTime->gt($clockOut)) {
-                            $validator->errors()->add("break_start_$i", "出勤時間もしくは退勤時間が不適切な値です。");
+                            $validator->errors()->add("break_end_$i", "出勤時間もしくは退勤時間が不適切な値です。");
                         }
-
                         foreach ($intervals as $j => [$prevStart, $prevEnd]) {
                             if ($startTime->lt($prevEnd) && $endTime->gt($prevStart)) {
                                 $validator->errors()->add("break_start_$i", "休憩{$i}が休憩" . ($j + 1) . "と重複しています。");
                                 break;
                             }
                         }
-
                         $intervals[] = [$startTime, $endTime];
                     } catch (\Exception $e) {
                         continue;
@@ -93,4 +82,5 @@ class CorrectionRequest extends FormRequest
             }
         });
     }
+
 }

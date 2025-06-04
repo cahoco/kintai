@@ -18,7 +18,6 @@ class StampCorrectionRequestTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-
         $this->user = User::factory()->create(['name' => 'テスト太郎']);
         $this->attendance = Attendance::factory()->create([
             'user_id' => $this->user->id,
@@ -36,7 +35,6 @@ class StampCorrectionRequestTest extends TestCase
             'clock_out' => '18:00',
             'note' => 'テスト',
         ]);
-
         $response->assertSessionHasErrors([
         'clock_out' => '出勤時間もしくは退勤時間が不適切な値です。',
         ]);
@@ -53,7 +51,6 @@ class StampCorrectionRequestTest extends TestCase
                 'break_end_1' => '19:30',
                 'note' => 'テスト',
             ]);
-
         $response->assertSessionHasErrors([
         'break_start_1' => '休憩時間が不適切な値です。',
         ]);
@@ -70,9 +67,8 @@ class StampCorrectionRequestTest extends TestCase
                 'break_end_1' => '19:30',
                 'note' => 'テスト',
             ]);
-
         $response->assertSessionHasErrors([
-        'break_start_1' => '出勤時間もしくは退勤時間が不適切な値です。',
+        'break_end_1' => '出勤時間もしくは退勤時間が不適切な値です。',
         ]);
     }
 
@@ -84,7 +80,6 @@ class StampCorrectionRequestTest extends TestCase
                 'clock_in' => '09:00',
                 'clock_out' => '18:00',
             ]);
-
         $response->assertSessionHasErrors([
         'note' => '備考を記入してください。',
         ]);
@@ -99,7 +94,6 @@ class StampCorrectionRequestTest extends TestCase
                 'clock_out' => '18:00',
                 'note' => '寝坊しました',
             ]);
-
         $this->assertDatabaseHas('stamp_correction_requests', [
             'attendance_id' => $this->attendance->id,
             'clock_in' => '09:30:00',
@@ -115,7 +109,6 @@ class StampCorrectionRequestTest extends TestCase
             'note' => 'テスト申請',
             'status' => '承認待ち',
         ]);
-
         $response = $this->actingAs($this->user)->get('/stamp_correction_request/list');
         $response->assertSee('テスト申請');
     }
@@ -124,13 +117,11 @@ class StampCorrectionRequestTest extends TestCase
     public function 承認済み申請が一覧に表示される()
     {
         $admin = User::factory()->create(['is_admin' => true]);
-
         StampCorrectionRequest::factory()->create([
             'user_id' => $admin->id,
             'note' => '承認された申請',
             'status' => '承認済み',
         ]);
-
         $response = $this->actingAs($admin)->get('/stamp_correction_request/list?status=承認済み');
         $response->assertSee('承認された申請');
         $response->assertSee('承認済み');
@@ -143,7 +134,6 @@ class StampCorrectionRequestTest extends TestCase
             'user_id' => $this->user->id,
             'note' => '詳細テスト申請',
         ]);
-
         $response = $this->actingAs($this->user)->get("/attendance/{$request->attendance_id}");
         $response->assertStatus(200)->assertSee('詳細テスト申請');
     }

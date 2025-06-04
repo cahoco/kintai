@@ -15,7 +15,7 @@ class AttendanceStatusTest extends TestCase
 
     private function actingAsWithDate($user)
     {
-        Carbon::setTestNow(Carbon::create(2025, 5, 29, 9, 0)); // 日付固定
+        Carbon::setTestNow(Carbon::create(2025, 5, 29, 9, 0));
         return $this->actingAs($user);
     }
 
@@ -33,7 +33,6 @@ class AttendanceStatusTest extends TestCase
     {
         $user = User::factory()->create();
         Carbon::setTestNow(Carbon::create(2025, 5, 29, 9, 0));
-
         Attendance::create([
             'user_id' => $user->id,
             'date' => Carbon::now()->toDateString(),
@@ -49,7 +48,6 @@ class AttendanceStatusTest extends TestCase
     {
         $user = User::factory()->create();
         Carbon::setTestNow(Carbon::create(2025, 5, 29, 9, 0));
-
         $attendance = Attendance::create([
             'user_id' => $user->id,
             'date' => Carbon::now()->toDateString(),
@@ -70,7 +68,6 @@ class AttendanceStatusTest extends TestCase
     {
         $user = User::factory()->create();
         Carbon::setTestNow(Carbon::create(2025, 5, 29, 9, 0));
-
         Attendance::create([
             'user_id' => $user->id,
             'date' => Carbon::now()->toDateString(),

@@ -17,10 +17,8 @@ class AdminAttendanceListTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-
-        // 管理者ユーザーを作成
         $this->admin = User::factory()->create([
-            'is_admin' => true, // adminミドルウェアがこれで判定されている前提
+            'is_admin' => true,
         ]);
     }
 
@@ -29,7 +27,6 @@ class AdminAttendanceListTest extends TestCase
     {
         $today = Carbon::today();
         $users = User::factory()->count(3)->create();
-
         foreach ($users as $user) {
             Attendance::factory()->create([
                 'user_id' => $user->id,
@@ -38,11 +35,8 @@ class AdminAttendanceListTest extends TestCase
                 'clock_out' => '18:00',
             ]);
         }
-
         $response = $this->actingAs($this->admin)->get('/admin/attendance/list');
-
         $response->assertStatus(200);
-
         foreach ($users as $user) {
             $response->assertSee($user->name);
             $response->assertSee('09:00');
@@ -54,9 +48,7 @@ class AdminAttendanceListTest extends TestCase
     public function 管理者が勤怠一覧画面に現在日付を確認できる()
     {
         $today = Carbon::today()->format('Y年n月j日');
-
         $response = $this->actingAs($this->admin)->get('/admin/attendance/list');
-
         $response->assertStatus(200)
                 ->assertSee($today);
     }
@@ -72,9 +64,7 @@ class AdminAttendanceListTest extends TestCase
             'clock_in' => '10:00',
             'clock_out' => '19:00',
         ]);
-
         $response = $this->actingAs($this->admin)->get('/admin/attendance/list?date=' . $yesterday->toDateString());
-
         $response->assertStatus(200)
                 ->assertSee('10:00')
                 ->assertSee('19:00')
@@ -92,9 +82,7 @@ class AdminAttendanceListTest extends TestCase
             'clock_in' => '08:30',
             'clock_out' => '17:30',
         ]);
-
         $response = $this->actingAs($this->admin)->get('/admin/attendance/list?date=' . $tomorrow->toDateString());
-
         $response->assertStatus(200)
                 ->assertSee('08:30')
                 ->assertSee('17:30')

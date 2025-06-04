@@ -104,17 +104,11 @@ class AttendanceController extends Controller
     public function update(CorrectionRequest $request, $id)
     {
         $attendance = Attendance::with('breakTimes')->findOrFail($id);
-
-        // 出退勤・備考を更新
         $attendance->clock_in = $request->input('clock_in');
         $attendance->clock_out = $request->input('clock_out');
         $attendance->note = $request->input('note');
         $attendance->save();
-
-        // 古い休憩データを削除
         $attendance->breakTimes()->delete();
-
-        // 入力された休憩を全てループで保存
         $index = 1;
         while (
             $request->has("break_start_{$index}") ||
@@ -122,19 +116,14 @@ class AttendanceController extends Controller
         ) {
             $start = $request->input("break_start_{$index}");
             $end = $request->input("break_end_{$index}");
-
-            // 両方埋まっていたときだけ保存
             if ($start && $end) {
                 $attendance->breakTimes()->create([
                     'break_start' => $start,
                     'break_end' => $end,
                 ]);
             }
-
             $index++;
         }
-
-        // リダイレクト先の分岐
         $from = $request->input('from');
         if ($from === 'staff') {
             return redirect()->route('admin.attendance.staff', ['id' => $attendance->user_id]);

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\CorrectionRequest;
 use App\Models\StampCorrectionRequest;
-use App\Models\BreakCorrection;
 
 class RequestController extends Controller
 {
@@ -26,7 +25,7 @@ class RequestController extends Controller
 
     public function showApprove($id)
     {
-        $request = \App\Models\StampCorrectionRequest::with(['user', 'attendance', 'breakCorrections'])->findOrFail($id);
+        $request = StampCorrectionRequest::with(['user', 'attendance', 'breakCorrections'])->findOrFail($id);
         return view('admin.request.approve', compact('request'));
     }
 
@@ -62,7 +61,7 @@ class RequestController extends Controller
         $user = auth()->user();
         $status = $request->query('status', '承認待ち');
         if ($user->is_admin) {
-            $requests = \App\Models\StampCorrectionRequest::with(['user', 'attendance'])
+            $requests = StampCorrectionRequest::with(['user', 'attendance'])
                 ->where('status', $status)
                 ->orderBy('created_at', 'desc')
                 ->get();
@@ -71,7 +70,7 @@ class RequestController extends Controller
                 'currentStatus' => $status,
             ]);
         } else {
-            $requests = \App\Models\StampCorrectionRequest::with(['attendance'])
+            $requests = StampCorrectionRequest::with(['attendance'])
                 ->where('user_id', $user->id)
                 ->where('status', $status)
                 ->orderBy('created_at', 'desc')

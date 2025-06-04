@@ -19,7 +19,6 @@ class RegisterTest extends TestCase
             'password' => 'password123',
             'password_confirmation' => 'password123',
         ]);
-
         $response->assertSessionHasErrors(['name']);
     }
 
@@ -32,7 +31,6 @@ class RegisterTest extends TestCase
             'password' => 'password123',
             'password_confirmation' => 'password123',
         ]);
-
         $response->assertSessionHasErrors(['email']);
     }
 
@@ -45,7 +43,6 @@ class RegisterTest extends TestCase
             'password' => 'short',
             'password_confirmation' => 'short',
         ]);
-
         $response->assertSessionHasErrors(['password']);
     }
 
@@ -58,7 +55,6 @@ class RegisterTest extends TestCase
             'password' => 'password123',
             'password_confirmation' => 'different123',
         ]);
-
         $response->assertSessionHasErrors(['password']);
     }
 
@@ -71,7 +67,6 @@ class RegisterTest extends TestCase
             'password' => '',
             'password_confirmation' => '',
         ]);
-
         $response->assertSessionHasErrors(['password']);
     }
 
@@ -84,10 +79,7 @@ class RegisterTest extends TestCase
             'password' => 'password123',
             'password_confirmation' => 'password123',
         ]);
-
-        // ちゃんと画面遷移するか齋藤コーチと確認する。
         $response->assertRedirect('/attendance');
-
         $this->assertDatabaseHas('users', [
             'email' => 'test@example.com',
         ]);

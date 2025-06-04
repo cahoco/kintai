@@ -23,13 +23,10 @@ class AttendanceListTest extends TestCase
     {
         $user = User::factory()->create();
         $this->actingAsWithDate($user);
-
-        // 3件の勤怠情報を作成
         Attendance::factory()->count(3)->create([
             'user_id' => $user->id,
             'date' => Carbon::now()->startOfMonth()->format('Y-m-d'),
         ]);
-
         $response = $this->get('/attendance/list');
         $response->assertStatus(200);
         $response->assertSee(Carbon::now()->format('m/d'));
@@ -40,7 +37,6 @@ class AttendanceListTest extends TestCase
     {
         $user = User::factory()->create();
         $this->actingAsWithDate($user);
-
         $response = $this->get('/attendance/list');
         $response->assertSee(Carbon::now()->format('Y/m'));
     }
@@ -50,12 +46,10 @@ class AttendanceListTest extends TestCase
     {
         $user = User::factory()->create();
         $this->actingAsWithDate($user, '2025-05-15');
-
         Attendance::factory()->create([
             'user_id' => $user->id,
             'date' => '2025-04-10',
         ]);
-
         $response = $this->get('/attendance/list?month=2025-04');
         $response->assertSee('04/10');
     }
@@ -65,12 +59,10 @@ class AttendanceListTest extends TestCase
     {
         $user = User::factory()->create();
         $this->actingAsWithDate($user, '2025-05-15');
-
         Attendance::factory()->create([
             'user_id' => $user->id,
             'date' => '2025-06-10',
         ]);
-
         $response = $this->get('/attendance/list?month=2025-06');
         $response->assertSee('06/10');
     }
@@ -80,12 +72,10 @@ class AttendanceListTest extends TestCase
     {
         $user = User::factory()->create();
         $this->actingAsWithDate($user);
-
         $attendance = Attendance::factory()->create([
             'user_id' => $user->id,
             'date' => '2025-05-01',
         ]);
-
         $response = $this->get('/attendance/list');
         $response->assertSee('/attendance/' . $attendance->id);
     }

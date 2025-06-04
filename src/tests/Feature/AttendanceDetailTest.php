@@ -24,12 +24,10 @@ class AttendanceDetailTest extends TestCase
     {
         $user = User::factory()->create(['name' => 'テスト太郎']);
         $this->actingAsWithDate($user);
-
         $attendance = Attendance::factory()->create([
             'user_id' => $user->id,
             'date' => Carbon::today()->toDateString(),
         ]);
-
         $response = $this->get("/attendance/{$attendance->id}");
         $response->assertSee('テスト太郎');
     }
@@ -39,12 +37,10 @@ class AttendanceDetailTest extends TestCase
     {
         $user = User::factory()->create();
         $this->actingAsWithDate($user);
-
         $attendance = Attendance::factory()->create([
             'user_id' => $user->id,
             'date' => '2025-05-01',
         ]);
-
         $response = $this->get("/attendance/{$attendance->id}");
         $response->assertSeeTextInOrder(['2025年', '5月1日']);
     }
@@ -54,14 +50,12 @@ class AttendanceDetailTest extends TestCase
     {
         $user = User::factory()->create();
         $this->actingAsWithDate($user);
-
         $attendance = Attendance::factory()->create([
             'user_id' => $user->id,
             'date' => '2025-05-01',
             'clock_in' => '09:00:00',
             'clock_out' => '18:00:00',
         ]);
-
         $response = $this->get("/attendance/{$attendance->id}");
         $response->assertSee('09:00');
         $response->assertSee('18:00');
@@ -72,18 +66,15 @@ class AttendanceDetailTest extends TestCase
     {
         $user = User::factory()->create();
         $this->actingAsWithDate($user);
-
         $attendance = Attendance::factory()->create([
             'user_id' => $user->id,
             'date' => '2025-05-01',
         ]);
-
         BreakTime::create([
             'attendance_id' => $attendance->id,
             'break_start' => '12:00:00',
             'break_end' => '12:30:00',
         ]);
-
         $response = $this->get("/attendance/{$attendance->id}");
         $response->assertSee('12:00');
         $response->assertSee('12:30');
