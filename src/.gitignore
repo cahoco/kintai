@@ -4,6 +4,7 @@
 /storage/*
 !/storage/app/public
 !/storage/app/public/**
+!storage/app/public/images/**
 /storage/*.key
 /vendor
 .env
