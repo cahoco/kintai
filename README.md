@@ -71,7 +71,7 @@ php artisan storage:link
 - パスワード：00000000
 
 
-## テスト実行（まだ未確認2025/05/28）
+## テスト実行
 
 ```
 php artisan test
