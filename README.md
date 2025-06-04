@@ -8,7 +8,7 @@
 
 1. ```git clone git@github.com:cahoco/kintai.git```
 2. ```cd coachtech-mock```
-3. code .
+3. ```code .```
 4. ```docker compose up -d```
 
 #### Laravel 環境構築
