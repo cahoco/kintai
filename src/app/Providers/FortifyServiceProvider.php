@@ -59,7 +59,7 @@ class FortifyServiceProvider extends ServiceProvider
             }
 
             throw \Illuminate\Validation\ValidationException::withMessages([
-                'email' => 'メールアドレスまたはパスワードが間違っています。',
+                'email' => 'ログイン情報が登録されていません',
             ]);
         });
 
@@ -77,7 +77,6 @@ class FortifyServiceProvider extends ServiceProvider
                 {
                     $user = auth()->user();
 
-                    // ✅ メール認証が未完了なら /email/verify に飛ばす
                     if (! $user->hasVerifiedEmail()) {
                         return redirect('/email/verify');
                     }

@@ -20,7 +20,6 @@ class CorrectionRequest extends FormRequest
             'note' => ['required', 'string', 'max:255'],
         ];
 
-        // 休憩10件まで対応（必要に応じて増減OK）
         for ($i = 1; $i <= 10; $i++) {
             $rules["break_start_$i"] = ['nullable', 'date_format:H:i'];
             $rules["break_end_$i"] = ['nullable', 'date_format:H:i', "after:break_start_$i"];
@@ -71,12 +70,14 @@ class CorrectionRequest extends FormRequest
                         $startTime = Carbon::createFromFormat('H:i', $start);
                         $endTime = Carbon::createFromFormat('H:i', $end);
 
-                        // 勤務時間外チェック
-                        if ($startTime->lt($clockIn) || $endTime->gt($clockOut)) {
-                            $validator->errors()->add("break_start_$i", "休憩時間が勤務時間外です。");
+                        if ($startTime->gt($clockOut)) {
+                            $validator->errors()->add("break_start_$i", "休憩時間が不適切な値です。");
                         }
 
-                        // 重複チェック
+                        if ($endTime->gt($clockOut)) {
+                            $validator->errors()->add("break_start_$i", "出勤時間もしくは退勤時間が不適切な値です。");
+                        }
+
                         foreach ($intervals as $j => [$prevStart, $prevEnd]) {
                             if ($startTime->lt($prevEnd) && $endTime->gt($prevStart)) {
                                 $validator->errors()->add("break_start_$i", "休憩{$i}が休憩" . ($j + 1) . "と重複しています。");
