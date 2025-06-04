@@ -19,7 +19,7 @@
 
 3. ```cp .env.example .env```
 
-4. env に以下の環境変数を追加
+4. env の該当箇所を以下の環境変数に変更
 
 ```
 DB_CONNECTION=mysql
