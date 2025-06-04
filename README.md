@@ -74,8 +74,20 @@ php artisan storage:link
 ## テスト実行
 
 ```
+//テスト用データベースの作成
+docker-compose exec mysql bash
+mysql -u root -p
+//パスワードはrootと入力
+create database test_database;
+exit;
+exit
+
+docker-compose exec php bash
+php artisan migrate:fresh --env=testing
 php artisan test
+
 ```
+
 
 ## 使用技術
 
