@@ -91,6 +91,7 @@ php artisan test
 <img width="602" alt="kintai_table" src="https://github.com/user-attachments/assets/ce773592-eee3-4eb5-8ad1-8f35c0fd1a12" />
 
 ## ER図
+<img width="575" alt="kintai_er" src="https://github.com/user-attachments/assets/c6b58f88-3e9a-4e8b-9f8b-c0ae8d0b6002" />
 
 ## URL
 
