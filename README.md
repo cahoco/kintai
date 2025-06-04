@@ -81,7 +81,7 @@ php artisan test
 
 - PHP 8.2.28
 - Laravel 8.83.29
-- MySQL 8.0.26 
+- MySQL（開発環境ではMariaDB 10.3.39 を使用） 
 - Docker / Docker Compose
 - Laravel Fortify（認証）v1.19.1
 - PHPUnit（テスト）
