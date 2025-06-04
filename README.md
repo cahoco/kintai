@@ -101,3 +101,4 @@ php artisan test
 #### メッセージ
 
 * メール認証画面の「認証はこちら」のグレーボタンを押すとMailhogの承認画面に飛ぶように設定しています。
+* ログインに失敗すると再ログイン時にTooManyRequestsのエラーが出てしまうので```php artisan cache:clear```してください。
